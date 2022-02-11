@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 
+from tqdm import tqdm
 # numpy for matrix algebra
 import pandas as pd
 from pandas import isnull
 import numpy as np
 from numpy import log, exp
 
-from scipy.misc import logsumexp
+from scipy.special import logsumexp
 from scipy.linalg import inv
 import scipy.optimize as op
 #from itertools import izip_longest
@@ -142,12 +143,13 @@ def fit(n_buys, n_sells, starts=10, maxiter=100,
     res_final = [a0,d0,t0,eb0,es0,ub0,us0,sb0,ss0]
     stderr = np.zeros_like(res_final)
     f = nll(res_final,n_buys,n_sells)
-    for i in range(starts):
+    for i in tqdm(range(starts)):
         rc = -1
         j = 0
         while (rc != 0) & (j <= maxiter):
             if (None in (res_final)) or i:
                 a0,d0,t0 = [np.random.uniform(l,np.nan_to_num(h)) for (l,h) in ranges]
+                # bug here (ValueError: lam value too large) -> start > 1
                 eb0,es0,ub0,us0,sb0,ss0 = np.random.poisson([eb,es,ub,us,sb,ss])
             res = op.minimize(nll, [a0,d0,t0,eb0,es0,ub0,us0,sb0,ss0], method=None,
                               bounds=bounds, 
@@ -184,8 +186,8 @@ if __name__ == '__main__':
     import pandas as pd
     from regressions import *
 
-    a,d,t,eb,es,ub,us,sb,ss = [0.489493,0.575609,0.285586,0.285586,219.196989,248.681991,93.444485,73.451801,81.519250,83.443071]
-    N = 1000
+    a,d,t,eb,es,ub,us,sb,ss = [0.489493,0.575609,0.285586,219.196989,248.681991,93.444485,73.451801,81.519250,83.443071]
+    N = 10
     T = 252
 
     model = DYModel(a, d, t, t, es, eb, us, ub, ss, sb, n=N, t=T)
@@ -211,3 +213,6 @@ if __name__ == '__main__':
 
     print(est_tab(res.results, est=['params','tvalues'], stats=['rsquared','rsquared_sp']))
     print(model.tree)
+
+    resultats = fit(buys, sells, 1)
+    print(resultats)

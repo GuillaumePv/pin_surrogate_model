@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from tqdm import tqdm
 # numpy for matrix algebra
 from pandas import Series
 from pandas import isnull
@@ -27,7 +28,7 @@ class GPINModel(object):
         self.a, self.r, self.p, self.eta, self.th, self.d, self.N, self.T = a, r, p, eta, th, d, n, t
 
         self.states = self._draw_states()
-        self.lamb = _lam(r, p, size=(n, t))
+        self.lamb = _lambda(r, p, size=(n, t))
         
         #change here compare to EO model
         self.buys = np.random.poisson(self.lamb*((th*(self.states != 1))+((th+eta)*(self.states == 1))))
@@ -55,7 +56,7 @@ class GPINModel(object):
 
         return states
 
-def _lam(r,p,size=None):
+def _lambda(r,p,size=None):
     "Compute \lambda_{NI} from shape r and scale p/(1-p) params"
     return np.nan_to_num(np.random.gamma(r,p/(1-p),size))
 
@@ -137,9 +138,10 @@ def fit(n_buys, n_sells, starts=10, maxiter=100,
     res_final = [a0,p0,eta0,r0,d0,th0]
     stderr1,stderr2 = np.zeros(4),np.zeros(2)
     
+    #function for optimization
     nll = lambda *args: -nbm_ll(*args)
     f = nll([a0,p0,eta0,r0],n_buys+n_sells)
-    for i in range(starts):
+    for i in tqdm(range(starts)):
         rc = -1
         j = 0
         while (rc != 0) & (j <= maxiter):
@@ -157,7 +159,8 @@ def fit(n_buys, n_sells, starts=10, maxiter=100,
             _,rc = res['fun'],res['status']
             a0,p0,eta0,r0 = res['x']
             stderr1 = 1/np.sqrt(inv(res['hess_inv'].todense()).diagonal())
-    
+
+    #function for optimization (log likelihood)
     nll = lambda *args: -loglik(*args)
     f = nll([a0,p0,eta0,r0,d0,th0],n_buys,n_sells)
     for i in range(starts):
@@ -246,3 +249,6 @@ if __name__ == '__main__':
     res = run_regs(regtab)
 
     print(est_tab(res.results, est=['params','tvalues'], stats=['rsquared','rsquared_sp']))
+
+    resultat = fit(buys, sells, 1)
+    print(resultat)

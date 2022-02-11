@@ -12,7 +12,7 @@ from tqdm import tqdm
 # import common functions
 from common import *
 
-class EOModel(object):
+class PINModel(object):
 
     def __init__(self,a,d,es,eb,u,n=1,t=252):
         """Initializes parameters of an Easley and O'Hara Sequential Trade Model
@@ -141,13 +141,13 @@ if __name__ == '__main__':
     d = 0.58
     es = 2719
     eb = 2672
-    u = 2700
+    mu = 2700
 
     # number of firm
-    N = 1
+    N = 10
     T = 252
 
-    model = EOModel(a,d,es,eb,u,n=N,t=T)
+    model = PINModel(a,d,es,eb,mu,n=N,t=T)
 
     buys = to_series(model.buys)
     sells = to_series(model.sells)
@@ -169,11 +169,13 @@ if __name__ == '__main__':
     res = run_regs(regtab)
 
     print(est_tab(res.results, est=['params','tvalues'], stats=['rsquared','rsquared_sp']))
-    print(buys, sells)
+    #print(buys, sells)
     # compute PIN 
 
     resultat = fit(buys, sells, 1)
     PIN = (resultat['a']*resultat['mu'])/((resultat['a']*resultat['mu'])+resultat['eb']+resultat['es'])
+    CPIE = compute_alpha(resultat['a'], resultat['d'], resultat['eb'], resultat['es'], resultat['mu'], buys, sells)
     print(fit(buys, sells, 1))
 
     print(f"PIN: {PIN}")
+    print(f"CPIE: {CPIE}")
