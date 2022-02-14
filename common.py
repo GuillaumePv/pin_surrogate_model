@@ -2,12 +2,14 @@ from __future__ import print_function
 from numpy import exp, log
 import numpy as np
 from scipy.special import gammaln
+from math import factorial
 
 try:
     from itertools import imap
 except ImportError:
     imap=map
 
+# voir le calcul 
 def lfact(x):
     '''Compute the log factorial using the scipy gammaln function.
 

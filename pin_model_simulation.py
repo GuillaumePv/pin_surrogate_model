@@ -13,6 +13,11 @@ from tqdm import tqdm
 # import common functions
 from common import *
 
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
+
+import os
+
 class PINModel(object):
 
     def __init__(self,a,d,es,eb,u,n=1,t=252):
@@ -54,7 +59,6 @@ class PINModel(object):
         news[news == 0] = -1
 
         states = events*news
-        print(len(states))
         return states
 
 # function that represents the Poisson log-likelihood which is common to each of the three states: good, bad, and no news
@@ -111,7 +115,7 @@ def fit(n_buys, n_sells, starts=10, maxiter=100,
     nll = lambda *args: -loglik(*args) # define the negative log likelihood that we will minimize
     bounds = [(0.00001,0.99999)]*2+[(0.00001,np.inf)]*3 # we will do a constrained optimization
     ranges = [(0.00001,0.99999)]*2 # we will define the min-max range for our random guesses
-    
+
     # if we do not have a prior on what the estimates are, we compute them here
     a0,d0 = [x or 0.5 for x in (a,d)] # 50% chance of information/news
     eb0,es0 = eb or np.mean(n_buys), es or np.mean(n_sells) # expected buys/sells = mean of observed buy/sells
@@ -121,10 +125,11 @@ def fit(n_buys, n_sells, starts=10, maxiter=100,
     res_final = [a0,d0,eb0,es0,u0] # define the vector that will hold all the parameters
     stderr = np.zeros_like(res_final) # define the vector that will hold our standard errors
     f = nll(res_final,n_buys,n_sells) # initialize the log likelihood function with the buys/sells data
-    for i in tqdm(range(starts)):
+    for i in range(starts):
         # rc is going to be our return code
         rc = -1
         j = 0
+        # somtimes bug
         while (rc != 0) & (j <= maxiter):
             if (None in (res_final)) or i:
                 # guess parameters
@@ -172,52 +177,61 @@ if __name__ == '__main__':
     
     import pandas as pd
     from regressions import *
+    # number of simulation
+    if os.path.isfile("test.txt") == False:
+        print("=== creating simulation file ===")
+        f = open("./data/simulation_output.txt", "a")
+        f.write("a,d,es,eb,mu,PIN\n")
+        f.close()
 
-    # loop to generate different output / range of parameters
-    # see with Yan and Zhang 2012 (grid search)
-    a = 0.41 # [0,1]
-    d = 0.58 # [0,1]
-    es = 2719 # create cluster (frequent (2300), infrequent (150), heavy (5600) => mean) 
-    eb = 2672
-    mu = 2700
-    test = np.int(np.random.uniform(2000,3000,1)[0]) # generate int
-    test1 = np.random.uniform(0,1,1)[0]
-    print(test)
-    # number of firm
-    N = 1
-    T = 252 # yearly => Monthly, weekly
+    sim = 10
+    max_iter = 10
+    for i in tqdm(range(sim)):
+        # see with Yan and Zhang 2012 (grid search)
+        a = np.random.uniform(0,0.9,1)[0] # [0,1]
+        d = np.random.uniform(0,0.9,1)[0] # [0,1]
+        es = int(np.random.uniform(2000,3000,1)[0]) # create cluster (frequent (2300), infrequent (150), heavy (5600) => mean) 
+        eb = int(np.random.uniform(2000,3000,1)[0])
+        mu = abs(eb-es)
+        # number of firm
+        N = 1
+        T = 252 # yearly => Monthly, weekly
 
-    model = PINModel(a,d,es,eb,mu,n=N,t=T)
+        model = PINModel(a,d,es,eb,mu,n=N,t=T)
 
-    buys = to_series(model.buys)
-    sells = to_series(model.sells)
-    
-    aoib = abs(buys-sells)
-    turn = buys+sells
-    alpha = to_series(model.alpha)
+        buys = to_series(model.buys)
+        sells = to_series(model.sells)
+        
+        aoib = abs(buys-sells)
+        turn = buys+sells
+        alpha = to_series(model.alpha)
 
-    def run_regs(df):
-        # run regression
-        m = []
-        m.append(partial_r2(df['alpha'],df[['aoib','aoib2']], df[['aoib','aoib2','turn','turn2']]))
-        out = pd.DataFrame(m, columns=['results'])
-        out.index.names = ['model']
-        return out
 
-    # regtab = pd.DataFrame({'alpha':alpha,'aoib':aoib,'aoib2':aoib**2,'turn':turn,'turn2':turn**2})
-    
-    # res = run_regs(regtab)
+        # print(est_tab(res.results, est=['params','tvalues'], stats=['rsquared','rsquared_sp']))
+        #print(buys, sells)
+        # compute PIN 
+        
+        resultat = fit(buys[:], sells[:],1, max_iter, a , d, es, eb, mu)
+        PIN = compute_pin(resultat)
 
-    # print(est_tab(res.results, est=['params','tvalues'], stats=['rsquared','rsquared_sp']))
-    #print(buys, sells)
-    # compute PIN 
-    
-    resultat = fit(buys[:], sells[:],1)
-    PIN = compute_pin(resultat)
+        # problem with this function
+        # CPIE = compute_alpha(resultat['a'], resultat['d'], resultat['eb'], resultat['es'], resultat['mu'], buys, sells)
+        # print(fit(buys, sells, 1))
 
-    # problem with this function
-    # CPIE = compute_alpha(resultat['a'], resultat['d'], resultat['eb'], resultat['es'], resultat['mu'], buys, sells)
-    # print(fit(buys, sells, 1))
+        ### Initial parameters ###
+        f = open("test.txt", "a")
+        f.write(f"{a},{d},{es},{eb},{mu},{PIN}\n")
+        f.close()
+        if i % 10 == 0:
+            output = f"""
+            alpha: {a}
+            delta: {d}
+            epsilon sell: {es}
+            epsilon buy: {eb}
+            mu: {mu}
 
-    print(f"PIN: {PIN}")
-    # print(f"CPIE: {CPIE}") # (T x N)
+            ==========
+            PIN: {PIN}
+            """
+
+            print(output)

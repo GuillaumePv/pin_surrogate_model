@@ -215,6 +215,7 @@ def fit(n_buys, n_sells, starts=10, maxiter=100,
                  } 
     return output
 
+
 if __name__ == '__main__':
     
     import pandas as pd
@@ -250,5 +251,5 @@ if __name__ == '__main__':
 
     print(est_tab(res.results, est=['params','tvalues'], stats=['rsquared','rsquared_sp']))
 
-    resultat = fit(buys, sells, 1)
+    resultat = fit(buys, sells, 5)
     print(resultat)

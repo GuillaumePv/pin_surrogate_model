@@ -181,12 +181,33 @@ def cpie_mech_dy(turn):
     mech[(turn > km[2])] = 1
     return mech
 
+def adjPIN(result):
+    num = result["a"]*(result["d"]*result["us"]+(1-result["d"])*result["us"])
+    denum = result['a']*(result['d']*result['ub']+(1-result["d"])*result['us'])+(result['sb']+result['ss'])*(result['a']*result['t']+(1-result['a']*result['t']))+result['es']+result['eb']
+
+    PIN = num/denum
+    return PIN
+
 if __name__ == '__main__':
     
     import pandas as pd
     from regressions import *
 
-    a,d,t,eb,es,ub,us,sb,ss = [0.489493,0.575609,0.285586,219.196989,248.681991,93.444485,73.451801,81.519250,83.443071]
+    ## Init parameter ##
+
+    # see with max and min in summary estimates of the paper
+    a = 0.489493 # [0,1]
+    d = 0.575609 # [0,1]
+    t = 0.285586 # [0,1]
+
+    # range => see between active and non-active stocks
+    eb = 219.196989
+    es = 248.681991
+    ub = 93.444485
+    us = 73.451801
+    sb = 81.519250
+    ss = 83.443071
+
     N = 10
     T = 252
 
@@ -214,5 +235,8 @@ if __name__ == '__main__':
     print(est_tab(res.results, est=['params','tvalues'], stats=['rsquared','rsquared_sp']))
     print(model.tree)
 
-    resultats = fit(buys, sells, 1)
+    resultats = fit(buys[:], sells[:], 1)
     print(resultats)
+
+    proba = adjPIN(resultats)
+    print(f"Adj. PIN: {proba}")
