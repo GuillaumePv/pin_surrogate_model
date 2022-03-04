@@ -17,6 +17,8 @@ import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 import os
+from joblib import Parallel, delayed
+import multiprocessing
 
 class PINModel(object):
 
@@ -173,65 +175,78 @@ def compute_pin(res):
     PIN = (res['a']*res['mu'])/((res['a']*res['mu'])+res['eb']+res['es'])
     return PIN
 
-if __name__ == '__main__':
+def simulation(numb_simu):
+    # see with Yan and Zhang 2012 (grid search)
+    a = np.random.uniform(0,0.9,1)[0] # [0,1]
+    d = np.random.uniform(0,0.9,1)[0] # [0,1]
+    es = int(np.random.uniform(200,300,1)[0]) # create cluster (frequent (2300), infrequent (150), heavy (5600) => mean) 
+    eb = int(np.random.uniform(200,300,1)[0])
+    mu = int(np.random.uniform(200,300,1)[0])
+    # number of firm
+    N = 1
+    T = 5 # yearly => Monthly, weekly
+
+    model = PINModel(a,d,es,eb,mu,n=N,t=T)
+
+    buys = to_series(model.buys)
+    sells = to_series(model.sells)
+        
     
-    import pandas as pd
-    from regressions import *
-    # number of simulation
-    if os.path.isfile("test.txt") == False:
-        print("=== creating simulation file ===")
-        f = open("./data/simulation_output.txt", "a")
-        f.write("a,d,es,eb,mu,PIN\n")
-        f.close()
 
-    sim = 10
-    max_iter = 10
-    for i in tqdm(range(sim)):
-        # see with Yan and Zhang 2012 (grid search)
-        a = np.random.uniform(0,0.9,1)[0] # [0,1]
-        d = np.random.uniform(0,0.9,1)[0] # [0,1]
-        es = int(np.random.uniform(2000,3000,1)[0]) # create cluster (frequent (2300), infrequent (150), heavy (5600) => mean) 
-        eb = int(np.random.uniform(2000,3000,1)[0])
-        mu = abs(eb-es)
-        # number of firm
-        N = 1
-        T = 252 # yearly => Monthly, weekly
 
-        model = PINModel(a,d,es,eb,mu,n=N,t=T)
-
-        buys = to_series(model.buys)
-        sells = to_series(model.sells)
+    # print(est_tab(res.results, est=['params','tvalues'], stats=['rsquared','rsquared_sp']))
+    #print(buys, sells)
+    # compute PIN 
         
-        aoib = abs(buys-sells)
-        turn = buys+sells
-        alpha = to_series(model.alpha)
-
-
-        # print(est_tab(res.results, est=['params','tvalues'], stats=['rsquared','rsquared_sp']))
-        #print(buys, sells)
-        # compute PIN 
-        
-        resultat = fit(buys[:], sells[:],1, max_iter, a , d, es, eb, mu)
-        PIN = compute_pin(resultat)
+    resultat = fit(buys[:], sells[:],1, max_iter)
+    PIN = compute_pin(resultat)
 
         # problem with this function
         # CPIE = compute_alpha(resultat['a'], resultat['d'], resultat['eb'], resultat['es'], resultat['mu'], buys, sells)
         # print(fit(buys, sells, 1))
 
         ### Initial parameters ###
-        f = open("test.txt", "a")
-        f.write(f"{a},{d},{es},{eb},{mu},{PIN}\n")
+    f = open("./data/simulation_output.txt", "a")
+    f.write(f"{buys.values},{sells.values},{PIN}\n")
+    f.close()
+        # if i % 10 == 0:
+        #     output = f"""
+        #     alpha: {a}
+        #     delta: {d}
+        #     epsilon sell: {es}
+        #     epsilon buy: {eb}
+        #     mu: {mu}
+
+        #     ==========
+        #     PIN: {PIN}
+        #     """
+
+    if numb_simu % 10 == 0:
+        output = f"""
+        buys: {buys.values}
+        sells: {sells.values}
+
+        ==========
+        PIN: {PIN}
+        """
+
+        print(output)
+
+if __name__ == '__main__':
+    
+    import pandas as pd
+    from regressions import *
+    # number of simulation
+    if os.path.isfile("./data/simulation_output.txt") == False:
+        print("=== creating simulation file ===")
+        f = open("./data/simulation_output.txt", "a")
+        f.write("buys,sales,PIN\n")
         f.close()
-        if i % 10 == 0:
-            output = f"""
-            alpha: {a}
-            delta: {d}
-            epsilon sell: {es}
-            epsilon buy: {eb}
-            mu: {mu}
 
-            ==========
-            PIN: {PIN}
-            """
+    sim = 10000
+    max_iter = 10
+    num_cores = multiprocessing.cpu_count()
+    print(f"== number of CPU: {num_cores} ==")
 
-            print(output)
+    Parallel(n_jobs=num_cores)(delayed(simulation)(i) for i in tqdm(range(sim)))
+       
