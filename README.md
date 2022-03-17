@@ -22,10 +22,13 @@ see to contact professor
 Surrogate model are defined inside some specific range of parameter. PIN model in this surrogate library have been trained inside the range defined the table below.
 The surroate can not estimate PIN probability with parameters outside of this range of parameters.
 
-| First Header  | Second Header | Third Header
+| Parameter | Min | Max
 | ------------- | ------------- | ------------- 
-| Content Cell  | Content Cell  | test
-| Content Cell  | Content Cell  | test
+| alpha  | 0  | 1
+| delta  | 0  | 1
+| u  | 0  | 200
+| epsilon buys  | 0  | 300
+| epsilon sells  | 0  | 300
 ## Authors
 
 - Guillaume Pavé (guillaumepave@gmail.com)
