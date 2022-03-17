@@ -96,7 +96,7 @@ def loglik(theta, n_buys, n_sells):
 def fit(n_buys, n_sells, starts=10, maxiter=100, 
         a=None, d=None, eb=None, es=None, u=None,
         se=None, **kwargs):
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
     """_summary_
 
     Args:
@@ -193,7 +193,10 @@ def simulation(numb_simu):
         
     
 
-
+    array_MLE = _ll(a,d,eb,es,mu,buys,sells)
+    print(array_MLE)
+    print(logsumexp(array_MLE,axis=0))
+    print(sum(logsumexp(array_MLE,axis=0)))
     # print(est_tab(res.results, est=['params','tvalues'], stats=['rsquared','rsquared_sp']))
     #print(buys, sells)
     # compute PIN 
@@ -206,9 +209,9 @@ def simulation(numb_simu):
         # print(fit(buys, sells, 1))
 
         ### Initial parameters ###
-    f = open("./data/simulation_output.txt", "a")
-    f.write(f"{buys.values},{sells.values},{PIN}\n")
-    f.close()
+    # f = open("./data/simulation_output.txt", "a")
+    # f.write(f"{buys.values},{sells.values},{PIN}\n")
+    # f.close()
         # if i % 10 == 0:
         #     output = f"""
         #     alpha: {a}
@@ -237,13 +240,13 @@ if __name__ == '__main__':
     import pandas as pd
     from regressions import *
     # number of simulation
-    if os.path.isfile("./data/simulation_output.txt") == False:
-        print("=== creating simulation file ===")
-        f = open("./data/simulation_output.txt", "a")
-        f.write("buys,sales,PIN\n")
-        f.close()
+    # if os.path.isfile("./data/simulation_output.txt") == False:
+    #     print("=== creating simulation file ===")
+    #     f = open("./data/simulation_output.txt", "a")
+    #     f.write("buys,sales,PIN\n")
+    #     f.close()
 
-    sim = 10000
+    sim = 10
     max_iter = 10
     num_cores = multiprocessing.cpu_count()
     print(f"== number of CPU: {num_cores} ==")
