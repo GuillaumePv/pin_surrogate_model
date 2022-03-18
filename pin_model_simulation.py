@@ -176,7 +176,9 @@ def compute_pin(res):
     return PIN
 
 def simulation(numb_simu):
-    # see with Yan and Zhang 2012 (grid search)
+    ## Daily simulation ##
+    
+    ## Hidden factor ##
     a = np.random.uniform(0,0.9,1)[0] # [0,1]
     d = np.random.uniform(0,0.9,1)[0] # [0,1]
     es = int(np.random.uniform(200,300,1)[0]) # create cluster (frequent (2300), infrequent (150), heavy (5600) => mean) 
@@ -188,6 +190,7 @@ def simulation(numb_simu):
 
     model = PINModel(a,d,es,eb,mu,n=N,t=T)
 
+    ## Factor ##
     buys = to_series(model.buys)
     sells = to_series(model.sells)
         

@@ -45,5 +45,8 @@ In construction
 
 ## Acknoledgements
 
+=> put citation here
+
 - Duarte & Young
 - Young
+- Deep Structural 

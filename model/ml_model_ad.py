@@ -161,6 +161,7 @@ class NetworkModel:
             y = (((x[:c1], x[c1:c2], x[c2:c3]), x[c3:]))
             return y
 
+        # load simulation data
         if self.par.opt.option_type == OptionType.CALL_EUR:
             data_dir = self.par.data.path_sim_save + '/call'
         else:
