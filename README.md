@@ -16,13 +16,13 @@ Create surrogate model for PIN based models
 - APIN
 - GPIN
 
+best score: 0.93 R2
 ## TO-DO
 
 - [x] see each MLE is equal tp sum of MLE
 - [ ] it is possible to normalize data in order to have one model for all
 see to contact professor
-- [ ] increase R2 of the model
-- [ ] try to create more data
+
 
 ## Instruction
 

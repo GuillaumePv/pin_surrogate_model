@@ -105,7 +105,6 @@ class NetworkModel:
             if (cc not in opt_data):
                 c.append(cc)
 
-        print(c)
         c1 = len(c)
         c2 = len(c) + len(opt_data)
 
@@ -139,17 +138,9 @@ class NetworkModel:
 
 
         # create splitting data
-        splitting = 0.8
-        shape_data = len(data)
         y_data = data[y]
         x_data = data[self.par.data.cross_vary_list]
-        y_train = y_data[:int(splitting*shape_data)]
-        y_test = y_data[int(splitting*shape_data):]
-        x_train = x_data[:int(splitting*shape_data)]
-        x_test = x_data[int(splitting*shape_data):]
 
-        print("data shape")
-        print(x_data.values.shape)
         #Create a callback that saves the model's weights
         cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=self.save_dir + '/', save_weights_only=True, verbose=0, save_best_only=True)
         print('start training for', self.par.model.E, 'epochs', flush=True)
@@ -182,8 +173,52 @@ class NetworkModel:
         """
         function to save a file
         """
-        # In construction
-        pass
+        self.par.save(save_dir=self.save_dir)
+
+        with open(self.save_dir + '/m' + '.p', 'wb') as handle:
+            pickle.dump(self.m, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+        with open(self.save_dir + '/std' + '.p', 'wb') as handle:
+            pickle.dump(self.std, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+        with open(self.save_dir + '/m_y' + '.p', 'wb') as handle:
+            pickle.dump(self.m_y, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        with open(self.save_dir + '/std_y' + '.p', 'wb') as handle:
+            pickle.dump(self.std_y, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        self.history_training.to_pickle(self.save_dir + '/history.p')
+
+    def load(self, n, other_save_dir=None):
+
+        self.par.name = n
+        if other_save_dir is None:
+            temp_dir = self.par.model.save_dir + '' + self.par.name
+        else:
+            temp_dir = other_save_dir + '' + self.par.name
+
+        if not os.path.exists(temp_dir):
+            os.makedirs(temp_dir)
+
+        par = Params()
+        par.load(load_dir=temp_dir)
+        self.par = par
+
+        with open(temp_dir + '/m' + '.p', 'rb') as handle:
+            self.m = pickle.load(handle)
+
+        with open(temp_dir + '/std' + '.p', 'rb') as handle:
+            self.std = pickle.load(handle)
+
+        with open(temp_dir + '/m_y' + '.p', 'rb') as handle:
+            self.m_y = pickle.load(handle)
+        with open(temp_dir + '/std_y' + '.p', 'rb') as handle:
+            self.std_y = pickle.load(handle)
+
+        self.history_training = pd.read_pickle(self.save_dir + '/history.p')
+
+        if self.model is None:
+            self.create_nnet_model()
+        self.model.load_weights(self.save_dir + '/')
+
 
     def create_nnet_model(self):
         L = []
