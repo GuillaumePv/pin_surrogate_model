@@ -94,7 +94,7 @@ class ParamsModels:
 
         self.name = Process.PIN
         self.normalize = True
-        self.layers = [64,32,16]
+        self.layers = [400,200,100]
         self.batch_size = 512
         self.activation = "swish"
         self.opti = Optimizer.ADAM
@@ -107,7 +107,7 @@ class ParamsData:
         self.path_sim_save = './data/'
         self.train_size = 3
         self.test_size = 10000
-        self.cross_vary_list = ["alpha,delta,epsilon_b,epsilon_s,u,buy,sell"]
+        self.cross_vary_list = ["alpha","delta","epsilon_b","epsilon_s","mu","buy","sell"]
         self.parallel = False
 
 class Params:

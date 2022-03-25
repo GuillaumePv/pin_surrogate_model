@@ -49,7 +49,7 @@ class FirstLayer(tf.keras.layers.Layer):
         #                                     shape=[self.num_outputs, self.l2], dtype=tf.float64)
         # self.kernel_data = self.add_weight("kernel_data",
         #                                    shape=[self.num_outputs,self.l3], dtype=tf.float64)
-
+        
     def call(self, input):
         r = tf.matmul(input[0], self.kernel_par) + tf.matmul(input[1], self.kernel_state) + tf.matmul(input[2], self.kernel_data)
         # r = tf.matmul(tf.transpose(input[0]), self.kernel_par)+tf.matmul(tf.transpose(input[1]), self.kernel_state)+tf.matmul(tf.transpose(input[2]), self.kernel_data)

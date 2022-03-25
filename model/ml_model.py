@@ -1,6 +1,7 @@
 1# ML_model
 # Created by Guillaume Pavé, at xx.xx.xx
 
+from locale import normalize
 import pickle
 import socket
 from numpy import dtype
@@ -21,14 +22,34 @@ class FirstLayer(tf.keras.layers.Layer):
 
         c = []
         y = ['MLE']
-
+        state = ['v0']
         opt_data = self.par.data.cross_vary_list
         for cc in self.par.process.__dict__.keys():
             if (cc not in opt_data):
                 c.append(cc)
         
         self.l1 = len(c)
-        self.l2 = len(opt_data)
+        self.l2 = len(state)
+        self.l3 = len(opt_data)
+
+    def build(self,input_shape):
+        self.kernel_par = self.add_weight("kernel_par",
+                                          shape=[self.l1,
+                                                 self.num_outputs], dtype=tf.float64)
+        self.kernel_state = self.add_weight("kernel_state",
+                                                shape=[self.l2,
+                                                    self.num_outputs], dtype=tf.float64)
+        self.kernel_data = self.add_weight("kernel_data",
+                                            shape=[self.l3,
+                                                    self.num_outputs], dtype=tf.float64)
+
+    def call(self,input):
+        print(input)
+        r = tf.matmul(input[0], self.kernel_par) + tf.matmul(input[1], self.kernel_state) + tf.matmul(input[2], self.kernel_data)
+        # r = tf.matmul(tf.transpose(input[0]), self.kernel_par)+tf.matmul(tf.transpose(input[1]), self.kernel_state)+tf.matmul(tf.transpose(input[2]), self.kernel_data)
+        r = tf.nn.swish(r)
+        return r
+
 
 
 class NetworkModel:
@@ -84,6 +105,7 @@ class NetworkModel:
             if (cc not in opt_data):
                 c.append(cc)
 
+        print(c)
         c1 = len(c)
         c2 = len(c) + len(opt_data)
 
@@ -96,15 +118,13 @@ class NetworkModel:
             m[k] = np.mean(d[k])
             std[k] = (((max(d[k]) - min(d[k])) ** 2) / 12) ** (1/2)
                 
-        self.m = pd.Series(m)
+        self.m = pd.Series(m) #column in index
         self.std = pd.Series(std)
     
         ###################
         # prepare data sets
         ###################
 
-
-        print(self.par.opt.process.name)
         if self.par.opt.process.name == Process.PIN.name:
             data_dir = self.par.data.path_sim_save + 'PIN_MLE.txt'
         else:
@@ -122,17 +142,18 @@ class NetworkModel:
         splitting = 0.8
         shape_data = len(data)
         y_data = data[y]
-        x_data = data[cc]
+        x_data = data[self.par.data.cross_vary_list]
         y_train = y_data[:int(splitting*shape_data)]
         y_test = y_data[int(splitting*shape_data):]
         x_train = x_data[:int(splitting*shape_data)]
         x_test = x_data[int(splitting*shape_data):]
 
+        print("data shape")
         print(x_data.values.shape)
         #Create a callback that saves the model's weights
         cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=self.save_dir + '/', save_weights_only=True, verbose=0, save_best_only=True)
         print('start training for', self.par.model.E, 'epochs', flush=True)
-        self.history_training = self.model.fit(x=x_data,y= y_data, epochs=self.par.model.E, validation_split=0.2, callbacks=[cp_callback], verbose=1)  # Pass callback to training
+        self.history_training = self.model.fit(x=x_data,y= y_data, epochs=self.par.model.E, validation_split=0.1, callbacks=[cp_callback], verbose=1)  # Pass callback to training
 
         self.history_training = pd.DataFrame(self.history_training.history)
 
@@ -166,10 +187,12 @@ class NetworkModel:
 
     def create_nnet_model(self):
         L = []
-
+        print(self.par.data.cross_vary_list)
+        print(len(self.par.data.cross_vary_list))
         for i, l in enumerate(self.par.model.layers):
             if i == 0:
-                L.append(FirstLayer(l,self.par))
+                L.append(tf.keras.layers.Dense(l, activation="swish", input_shape=[len(self.par.data.cross_vary_list)]))
+                # L.append(FirstLayer(l,self.par))
             else:
                 L.append(layers.Dense(l, activation= self.par.model.activation, dtype=tf.float64))
 
