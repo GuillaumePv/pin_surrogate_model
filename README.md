@@ -16,7 +16,11 @@ Create surrogate model for PIN based models
 - APIN
 - GPIN
 
-best score: 0.93 R2
+self.layers = [400,200,100] 0.93 R2
+
+self.layers = [400,200,100,50] # 0.9416 R2
+
+[400,400,200,100] => 0.95 R2
 ## TO-DO
 
 - [x] see each MLE is equal tp sum of MLE

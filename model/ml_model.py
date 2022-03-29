@@ -131,7 +131,7 @@ class NetworkModel:
 
         data = pd.read_csv(data_dir)
         # print(data.head())
-        self.save()
+        
 
         if self.model is None:
             self.create_nnet_model()
@@ -144,9 +144,10 @@ class NetworkModel:
         #Create a callback that saves the model's weights
         cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=self.save_dir + '/', save_weights_only=True, verbose=0, save_best_only=True)
         print('start training for', self.par.model.E, 'epochs', flush=True)
-        self.history_training = self.model.fit(x=x_data,y= y_data, epochs=self.par.model.E, validation_split=0.1, callbacks=[cp_callback], verbose=1)  # Pass callback to training
+        self.history_training = self.model.fit(x=x_data,y= y_data, epochs=self.par.model.E, validation_split=0.2, callbacks=[cp_callback], verbose=1)  # Pass callback to training
 
         self.history_training = pd.DataFrame(self.history_training.history)
+        self.save()
 
     def predict(self, X):
         X, y = self.normalize(X, y=None)
@@ -222,8 +223,6 @@ class NetworkModel:
 
     def create_nnet_model(self):
         L = []
-        print(self.par.data.cross_vary_list)
-        print(len(self.par.data.cross_vary_list))
         for i, l in enumerate(self.par.model.layers):
             if i == 0:
                 L.append(tf.keras.layers.Dense(l, activation="swish", input_shape=[len(self.par.data.cross_vary_list)]))
