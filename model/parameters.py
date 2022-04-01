@@ -108,7 +108,7 @@ class ParamsData:
         self.path_sim_save = './data/'
         self.train_size = 3
         self.test_size = 10000
-        self.cross_vary_list = ["alpha","delta","epsilon_b","epsilon_s","mu","buy","sell"]
+        self.cross_vary_list = ["alpha","delta","epsilon_b","epsilon_s","mu","buy","sell"] # put only obsvervable state for backward compatibility
         self.parallel = False
 
 class Params:

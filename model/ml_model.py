@@ -69,11 +69,7 @@ class NetworkModel:
     def normalize(self, X=None, y=None):
         if self.par.model.normalize:
             if X is not None:
-                print(X)
-                print(self.m)
-                print(self.std)
                 X = (X - self.m) / self.std
-                print(X)
 
             if y is not None:
                 pass
@@ -95,6 +91,28 @@ class NetworkModel:
                     y = (y * self.std_y) + self.m_y
             
         return X, y
+
+    # it works
+    def split_state_data_par(self, df):
+
+        opt_data = df[['buy', 'sell']]
+        c = []
+        for cc in self.par.process.__dict__.keys():
+            # for cc in df.columns:
+            if (cc not in opt_data.columns):
+                c.append(cc)
+
+        par_est = df[c]
+
+        # to put back if the __dict__ trick above does not do the trick
+        # if self.par.opt.process == Process.DOUBLE_EXP:
+        #     # print('double exp')
+        #     par_est = par_est[['dividend', 'kappa', 'lambda_parameter', 'nuDown', 'nuUp', 'p', 'rho', 'sigma', 'theta']]
+        # else:
+        #     par_est = par_est[['dividend','kappa', 'rho', 'sigma', 'theta']]
+        #     # print('COLUMNS', par_est.columns)
+
+        return [par_est, opt_data]
 
     def train(self): # In Construction
     #################
@@ -134,6 +152,10 @@ class NetworkModel:
             data_dir = self.par.data.path_sim_save + 'APIN_MLE.txt'
 
         data = pd.read_csv(data_dir)
+        # print("=== spltting data ===")
+        # print(self.split_state_data_par(data)[0])
+        # print("2nd part")
+        # print(self.split_state_data_par(data)[1])
         # print(data.head())
         
 
@@ -146,13 +168,13 @@ class NetworkModel:
         x_data = data[self.par.data.cross_vary_list]
         x_data = self.normalize(x_data)[0]
 
-        #Create a callback that saves the model's weights
-        cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=self.save_dir + '/', save_weights_only=True, verbose=0, save_best_only=True)
-        print('start training for', self.par.model.E, 'epochs', flush=True)
-        self.history_training = self.model.fit(x=x_data,y= y_data, epochs=self.par.model.E, validation_split=0.2, callbacks=[cp_callback], verbose=1)  # Pass callback to training
+        # #Create a callback that saves the model's weights
+        # cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=self.save_dir + '/', save_weights_only=True, verbose=0, save_best_only=True)
+        # print('start training for', self.par.model.E, 'epochs', flush=True)
+        # self.history_training = self.model.fit(x=x_data,y= y_data, epochs=self.par.model.E, validation_split=0.2, callbacks=[cp_callback], verbose=1)  # Pass callback to training
 
-        self.history_training = pd.DataFrame(self.history_training.history)
-        self.save()
+        # self.history_training = pd.DataFrame(self.history_training.history)
+        # self.save()
 
     def predict(self, X):
         X, y = self.normalize(X, y=None)
