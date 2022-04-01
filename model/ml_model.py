@@ -152,6 +152,7 @@ class NetworkModel:
             data_dir = self.par.data.path_sim_save + 'APIN_MLE.txt'
 
         data = pd.read_csv(data_dir)
+        ## normalize before doing splitting data
         # print("=== spltting data ===")
         # print(self.split_state_data_par(data)[0])
         # print("2nd part")
