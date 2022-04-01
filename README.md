@@ -20,7 +20,7 @@ self.layers = [400,200,100] 0.93 R2
 
 self.layers = [400,200,100,50] # 0.9416 R2
 
-[400,400,200,100] => 0.95 R2
+[400,400,200,100] => 0.9898 R2
 ## TO-DO
 
 - [x] see each MLE is equal tp sum of MLE
@@ -56,3 +56,45 @@ In construction
 - Duarte & Young
 - Young
 - Deep Structural 
+
+optimization pour trouver les parameters
+ params_df, true_s, true_opt = self.c_model.split_state_data_par(X)
+        true_opt = tf.convert_to_tensor(true_opt.values)
+        tf_loss = tf.keras.losses.MSE
+
+        bounds = tf.fill((1, len(init_x)), self.pivot)
+        bound_cost = tf.constant(100.0, dtype=tf.float64)
+
+        @tf.function
+        def func(x_params):
+            x_params = tf.reshape(x_params, (1, -1))
+            par_est = x_params[:, :-1]
+            state = x_params[:, -1:]
+            pred = self.c_model.model([par_est, state, true_opt])
+            v_call = tf_loss(pred, Y)
+            bnd = tf.reduce_sum(tf.nn.relu(x_params - bounds) + tf.nn.relu(-(x_params + bounds))) * bound_cost
+            return tf.reduce_mean(v_call) + tf.reduce_mean(bnd)
+
+        @tf.function
+        def func_g(x_params):
+            with tf.GradientTape() as tape:
+                tape.watch(x_params)
+                loss_value = func(x_params)
+            grads = tape.gradient(loss_value, [x_params])
+            return loss_value, grads[0]
+
+        s = time.time()
+        soln = tfp.optimizer.lbfgs_minimize(func_g, init_x, max_iterations=50, tolerance=1e-60)
+        soln_time = np.round((time.time() - s) / 60, 2)
+        pred_par = soln.position.numpy()
+        obj_value = soln.objective_value.numpy()
+
+        for ii in range(params_df.shape[1]):
+            X.loc[:, params_df.columns[ii]] = pred_par[ii]
+        X['v0'] = pred_par[ii + 1]
+
+        score=self.c_model.score(self.c_model.unnormalize(X)[0],Y)
+
+        perf=pd.Series(list(score)+[obj_value, soln_time], index=['r2','mae','mse','obj','time'])
+        pr = self.c_model.unnormalize(X)[0].iloc[0, :]
+        res=pr[pd.Series(pr.index.tolist())[~pd.Series(pr.index.tolist()).isin(self.par_c.data.cross_vary_list)]]

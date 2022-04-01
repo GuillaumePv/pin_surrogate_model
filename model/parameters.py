@@ -94,7 +94,8 @@ class ParamsModels:
 
         self.name = Process.PIN
         self.normalize = True
-        self.layers = [400,200,100] # 0.9416
+        # self.layers = [400,200,100] # 0.9416
+        self.layers = [400,400,200,100] # 0.9416
         self.batch_size = 512
         self.activation = "swish"
         self.opti = Optimizer.ADAM

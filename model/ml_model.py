@@ -69,7 +69,11 @@ class NetworkModel:
     def normalize(self, X=None, y=None):
         if self.par.model.normalize:
             if X is not None:
+                print(X)
+                print(self.m)
+                print(self.std)
                 X = (X - self.m) / self.std
+                print(X)
 
             if y is not None:
                 pass
@@ -140,6 +144,7 @@ class NetworkModel:
         # create splitting data
         y_data = data[y]
         x_data = data[self.par.data.cross_vary_list]
+        x_data = self.normalize(x_data)[0]
 
         #Create a callback that saves the model's weights
         cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=self.save_dir + '/', save_weights_only=True, verbose=0, save_best_only=True)
