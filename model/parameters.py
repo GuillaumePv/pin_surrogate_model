@@ -72,11 +72,11 @@ class ParamsPin(ParamsProcess):
     def __init__(self):
         self.alpha = [0.0, 1.0]
         self.delta = [0.0, 1.0]
-        self.epsilon_b = [0, 300]
-        self.epsilon_s = [0, 300]
-        self.mu = [0, 200]
-        self.buy = [0, 600]
-        self.sell = [0, 600]
+        self.epsilon_b = [100, 300]
+        self.epsilon_s = [100, 300]
+        self.mu = [100, 200]
+        self.buy = [200, 600]
+        self.sell = [200, 600]
 
 class ParamsApin(ParamsProcess):
     def __init__(self) -> None:
@@ -94,6 +94,7 @@ class ParamsModels:
 
         self.name = Process.PIN
         self.normalize = True
+        self.normalize_range = False
         # self.layers = [400,200,100] # 0.9416
         self.layers = [400,400,200,100] # 0.9416
         self.batch_size = 512
@@ -108,7 +109,8 @@ class ParamsData:
         self.path_sim_save = './data/'
         self.train_size = 3
         self.test_size = 10000
-        self.cross_vary_list = ["alpha","delta","epsilon_b","epsilon_s","mu","buy","sell"] # put only obsvervable state for backward compatibility
+        # self.cross_vary_list = ["alpha","delta","epsilon_b","epsilon_s","mu","buy","sell"] # put only obsvervable state for backward compatibility
+        self.cross_vary_list = ["buy","sell"]
         self.parallel = False
 
 class Params:
@@ -118,7 +120,7 @@ class Params:
         self.model = ParamsModels()
         self.data =  ParamsData()
         self.opt = ParamsOption()
-
+  
         self.process = None
         self.update_process()
         self.update_model_name()
@@ -155,23 +157,71 @@ class Params:
                 print(v)
 
 
-    def save(self, save_dir, filename="./parameters.p"):
-        """
-        save parameters of the model
-        """
-        #In construction
-        pass
+    def save(self, save_dir, file_name="./parameters.p"):
+       # simple save function that allows loading of deprecated parameters object
+        df = pd.DataFrame(columns=['key', 'value'])
 
-    def load(self, load_dir, filename="./parameters.p"):
-        """
-        load parameters of the model
-        """
-        # In construction
-        pass
+        for key, v in self.__dict__.items():
+            try:
+                for key2, vv in v.__dict__.items():
+                    temp = pd.DataFrame(data=[str(key) + '_' + str(key2), vv], index=['key', 'value']).T
+                    df = df.append(temp)
+
+            except:
+                temp = pd.DataFrame(data=[key, v], index=['key', 'value']).T
+                df = df.append(temp)
+        df.to_pickle(save_dir + file_name,protocol=4)
+
+    def load(self, load_dir, file_name="./parameters.p"):
+        # simple load function that allows loading of deprecated parameters object
+        df = pd.read_pickle(load_dir + file_name)
+        # First check if this is an old pickle version, if so transform it into a df
+        if type(df) != pd.DataFrame:
+            loaded_par = df
+            df = pd.DataFrame(columns=['key', 'value'])
+            for key, v in loaded_par.__dict__.items():
+                try:
+                    for key2, vv in v.__dict__.items():
+                        temp = pd.DataFrame(data=[str(key) + '_' + str(key2), vv], index=['key', 'value']).T
+                        df = df.append(temp)
+
+                except:
+                    temp = pd.DataFrame(data=[key, v], index=['key', 'value']).T
+                    df = df.append(temp)
+
+        no_old_version_bug = True
+
+        for key, v in self.__dict__.items():
+            try:
+                for key2, vv in v.__dict__.items():
+                    t = df.loc[df['key'] == str(key) + '_' + str(key2), 'value']
+                    if t.shape[0] == 1:
+                        tt = t.values[0]
+                        self.__dict__[key].__dict__[key2] = tt
+                    else:
+                        if no_old_version_bug:
+                            no_old_version_bug = False
+                            # print('#### Loaded parameters object is depreceated, default version will be used')
+                        # print('Parameter', str(key) + '.' + str(key2), 'not found, using default: ',
+                        #       self.__dict__[key].__dict__[key2])
+
+            except:
+                t = df.loc[df['key'] == str(key), 'value']
+                if t.shape[0] == 1:
+                    tt = t.values[0]
+                    self.__dict__[key] = tt
+                else:
+                    if no_old_version_bug:
+                        no_old_version_bug = False
+                    #     print('#### Loaded parameters object is depreceated, default version will be used')
+                    # print('Parameter', str(key), 'not found, using default: ', self.__dict__[key])
+
+        self.update_process()
+
+        # to ensure backward compatibility, we update her the cross_vary_list
+        self.data.cross_vary_list = ["buy","sell"]
 
 if __name__ == "__main__":
     params = Params()
-    # params.print_values()
-
     process = Process
     

@@ -24,8 +24,12 @@ self.layers = [400,200,100,50] # 0.9416 R2
 ## TO-DO
 
 - [x] see each MLE is equal tp sum of MLE
-- [ ] it is possible to normalize data in order to have one model for all
+- [x] it is possible to normalize data in order to have one model for all
 see to contact professor
+- [ ] chekc how work optimizer
+- [ ] use First layer to optimize data
+- [x] trouver le moyen de changer l'input
+
 
 
 ## Instruction

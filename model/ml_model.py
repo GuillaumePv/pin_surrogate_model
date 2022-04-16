@@ -22,33 +22,32 @@ class FirstLayer(tf.keras.layers.Layer):
 
         c = []
         y = ['MLE']
-        state = ['v0']
         opt_data = self.par.data.cross_vary_list
         for cc in self.par.process.__dict__.keys():
             if (cc not in opt_data):
                 c.append(cc)
         
+        # print(c)
+        # print(opt_data)
         self.l1 = len(c)
-        self.l2 = len(state)
-        self.l3 = len(opt_data)
+        self.l2 = len(opt_data)
 
     def build(self,input_shape):
         self.kernel_par = self.add_weight("kernel_par",
                                           shape=[self.l1,
                                                  self.num_outputs], dtype=tf.float64)
-        self.kernel_state = self.add_weight("kernel_state",
+        self.kernel_state = self.add_weight("kernel_data",
                                                 shape=[self.l2,
-                                                    self.num_outputs], dtype=tf.float64)
-        self.kernel_data = self.add_weight("kernel_data",
-                                            shape=[self.l3,
                                                     self.num_outputs], dtype=tf.float64)
 
     def call(self,input):
-        print(input)
-        r = tf.matmul(input[0], self.kernel_par) + tf.matmul(input[1], self.kernel_state) + tf.matmul(input[2], self.kernel_data)
-        # r = tf.matmul(tf.transpose(input[0]), self.kernel_par)+tf.matmul(tf.transpose(input[1]), self.kernel_state)+tf.matmul(tf.transpose(input[2]), self.kernel_data)
+        print("=== input ===")
+        print(tf.print(input[0]))
+        ## bug icis
+        r = tf.matmul(input[0], self.kernel_par) + tf.matmul(input[1], self.kernel_state)
+        # r = tf.matmul(tf.transpose(input[0]), self.kernel_par) +tf.matmul(tf.transpose(input[1]), self.kernel_state)
         r = tf.nn.swish(r)
-        return r
+        return input
 
 
 
@@ -69,6 +68,12 @@ class NetworkModel:
     def normalize(self, X=None, y=None):
         if self.par.model.normalize:
             if X is not None:
+                # print(len(X))
+                # if len(X) > 1:
+                #     X = pd.concat(X,axis=1)
+                # print(X.shape)
+                # print(self.m.shape)
+                # print(self.std.shape)
                 X = (X - self.m) / self.std
 
             if y is not None:
@@ -142,9 +147,13 @@ class NetworkModel:
         self.m = pd.Series(m) #column in index
         self.std = pd.Series(std)
     
-        ###################
+        ##################
         # prepare data sets
-        ###################
+        ##################
+        def tr(x):
+            # y = (((x[:,:c1], x[:,c1:c2]), x[:,c2:]))
+            y = (x[:c2], x[c2:])
+            return y
 
         if self.par.opt.process.name == Process.PIN.name:
             data_dir = self.par.data.path_sim_save + 'PIN_MLE.txt'
@@ -152,6 +161,9 @@ class NetworkModel:
             data_dir = self.par.data.path_sim_save + 'APIN_MLE.txt'
 
         data = pd.read_csv(data_dir)
+        # data = data.to_numpy()
+        # print(tr(data)[0])
+        # print(tr(data)[1])
         ## normalize before doing splitting data
         # print("=== spltting data ===")
         # print(self.split_state_data_par(data)[0])
@@ -166,29 +178,36 @@ class NetworkModel:
 
         # create splitting data
         y_data = data[y]
-        x_data = data[self.par.data.cross_vary_list]
-        x_data = self.normalize(x_data)[0]
+        x_data = data[c + opt_data]
+        x_data_c = data[c]
+        x_data_opt_data = data[opt_data]
+        test_data = self.split_state_data_par(data)
+        x_data, y_none = self.normalize(test_data) 
+        # x_data = self.normalize([x_data_c,x_data_opt_data])[0]
 
-        # #Create a callback that saves the model's weights
-        # cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=self.save_dir + '/', save_weights_only=True, verbose=0, save_best_only=True)
-        # print('start training for', self.par.model.E, 'epochs', flush=True)
-        # self.history_training = self.model.fit(x=x_data,y= y_data, epochs=self.par.model.E, validation_split=0.2, callbacks=[cp_callback], verbose=1)  # Pass callback to training
+        ###################
+        ## A CHECCK !!!! ##
+        ###################
+
+        # data_train = tf.data.TFRecordDataset(data_dir, num_parallel_reads=tf.data.experimental.AUTOTUNE)
+        # data_train = data_train.map(lambda x: tf.ensure_shape(tf.io.parse_tensor(x, tf.float64), (c2 + 1)), num_parallel_calls=tf.data.experimental.AUTOTUNE)
+        # data_train = data_train.map(lambda x: tr(x), num_parallel_calls=tf.data.experimental.AUTOTUNE)
+        # data_train = data_train.batch(batch_size=self.par.model.batch_size * 1)
+
+        #Create a callback that saves the model's weights
+        cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=self.save_dir + '/', save_weights_only=True, verbose=0, save_best_only=True)
+        print('start training for', self.par.model.E, 'epochs', flush=True)
+        self.history_training = self.model.fit(x=x_data.values, y=y_data.values, validation_split=0.2,epochs=self.par.model.E, callbacks=[cp_callback], verbose=1)  # Pass callback to training
 
         # self.history_training = pd.DataFrame(self.history_training.history)
         # self.save()
 
     def predict(self, X):
-        X, y = self.normalize(X, y=None)
         X = self.split_state_data_par(X)
-        pred = self.model.predict(X)
-        return pred
+        X, y = self.normalize(X, y=None)
 
-    def optimizer(self,X):
-        """
-        Function in order to optimize our MLE value in orer to find PIN
-        """
-        # In construction
-        pass
+        pred = self.model.predict(X.values)
+        return pred
 
     def get_pin(self, X):
         """
@@ -228,7 +247,7 @@ class NetworkModel:
             os.makedirs(temp_dir)
 
         par = Params()
-        par.load(load_dir=temp_dir)
+        # par.load(load_dir=temp_dir)
         self.par = par
 
         with open(temp_dir + '/m' + '.p', 'rb') as handle:
@@ -253,7 +272,7 @@ class NetworkModel:
         L = []
         for i, l in enumerate(self.par.model.layers):
             if i == 0:
-                L.append(tf.keras.layers.Dense(l, activation="swish", input_shape=[len(self.par.data.cross_vary_list)]))
+                L.append(tf.keras.layers.Dense(l, activation="swish", input_shape=[len(self.par.process.__dict__)])) # trouver le moyen de changer ça
                 # L.append(FirstLayer(l,self.par))
             else:
                 L.append(layers.Dense(l, activation= self.par.model.activation, dtype=tf.float64))
