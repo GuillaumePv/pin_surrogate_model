@@ -157,6 +157,7 @@ def fit(n_buys, n_sells, starts=10, maxiter=100,
                   'se': dict(zip(param_names,stderr)),
                   'stats':{'f': f,'rc': rc}
                  }
+    print(output)
     return output
 
 def cpie_mech(turn):

@@ -1,0 +1,30 @@
+## what I make ?
+
+1. I compute likelihood 
+2. I create a NN to replace le likelihood function
+3. I need to optimize my NN 
+
+## problem with optimization
+- chang only hidden state
+- same for an addition
+
+-> voir pour faire avec des tensorflow et comprendre comment faire
+
+-> optimizer Antoine:
+=> retrouver les paramètres de départ
+
+
+=> prendre 5 et ensuite optimizer avec les 5 parameters voulu
+    => prendre 5 lignes et ensuite optimizer la dessus avec les mêmes paramètres
+
+Optimizer
+-> essayer de voir pour faire un optimizer sur plusieurs périodes
+-> voir si le PIN fonctionne
+-> voir si les résultats sont concluants
+-> voir pour paralleliser le code
+
+## To-DO
+- faire tableau de stat descriptive
+- voir pourquoi l'optimization ne fonctione pas
+- faire écriture des premières parties (intro, literrature review, methods)
+- discuter des graphes

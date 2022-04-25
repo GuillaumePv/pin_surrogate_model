@@ -96,7 +96,7 @@ def loglik(theta, n_buys, n_sells):
 def fit(n_buys, n_sells, starts=10, maxiter=100, 
         a=None, d=None, eb=None, es=None, u=None,
         se=None, **kwargs):
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
     """_summary_
 
     Args:
@@ -176,7 +176,9 @@ def compute_pin(res):
     return PIN
 
 def simulation(numb_simu):
-    # see with Yan and Zhang 2012 (grid search)
+    ## Daily simulation ##
+    
+    ## Hidden factor ##
     a = np.random.uniform(0,0.9,1)[0] # [0,1]
     d = np.random.uniform(0,0.9,1)[0] # [0,1]
     es = int(np.random.uniform(200,300,1)[0]) # create cluster (frequent (2300), infrequent (150), heavy (5600) => mean) 
@@ -184,30 +186,34 @@ def simulation(numb_simu):
     mu = int(np.random.uniform(200,300,1)[0])
     # number of firm
     N = 1
-    T = 5 # yearly => Monthly, weekly
+    T = 1 # yearly => Monthly, weekly
 
     model = PINModel(a,d,es,eb,mu,n=N,t=T)
 
+    ## Factor ##
     buys = to_series(model.buys)
     sells = to_series(model.sells)
         
     
 
-
+    array_MLE = _ll(a,d,eb,es,mu,buys,sells)
+    MLE = logsumexp(array_MLE,axis=0)[0]
+    # print(logsumexp(array_MLE,axis=0))
+    # print(sum(logsumexp(array_MLE,axis=0)))
     # print(est_tab(res.results, est=['params','tvalues'], stats=['rsquared','rsquared_sp']))
     #print(buys, sells)
     # compute PIN 
         
-    resultat = fit(buys[:], sells[:],1, max_iter)
-    PIN = compute_pin(resultat)
+    # resultat = fit(buys[:], sells[:],1, max_iter)
+    # PIN = compute_pin(resultat)
 
         # problem with this function
         # CPIE = compute_alpha(resultat['a'], resultat['d'], resultat['eb'], resultat['es'], resultat['mu'], buys, sells)
         # print(fit(buys, sells, 1))
 
         ### Initial parameters ###
-    f = open("./data/simulation_output.txt", "a")
-    f.write(f"{buys.values},{sells.values},{PIN}\n")
+    f = open("./data/PIN_MLE.txt", "a")
+    f.write(f"{a},{d},{es},{eb},{mu},{buys.values[0]},{sells.values[0]},{MLE}\n")
     f.close()
         # if i % 10 == 0:
         #     output = f"""
@@ -221,29 +227,29 @@ def simulation(numb_simu):
         #     PIN: {PIN}
         #     """
 
-    if numb_simu % 10 == 0:
-        output = f"""
-        buys: {buys.values}
-        sells: {sells.values}
+    # if numb_simu % 10 == 0:
+    #     output = f"""
+    #     buys: {buys.values}
+    #     sells: {sells.values}
 
-        ==========
-        PIN: {PIN}
-        """
+    #     ==========
+    #     PIN: {PIN}
+    #     """
 
-        print(output)
+    #     print(output)
 
 if __name__ == '__main__':
     
     import pandas as pd
     from regressions import *
     # number of simulation
-    if os.path.isfile("./data/simulation_output.txt") == False:
+    if os.path.isfile("./data/PIN_MLE.txt") == False:
         print("=== creating simulation file ===")
-        f = open("./data/simulation_output.txt", "a")
-        f.write("buys,sales,PIN\n")
+        f = open("./data/PIN_MLE.txt", "a")
+        f.write("alpha,delta,epsilon_b,epsilon_s,mu,buy,sell,MLE\n")
         f.close()
 
-    sim = 10000
+    sim = 5000000
     max_iter = 10
     num_cores = multiprocessing.cpu_count()
     print(f"== number of CPU: {num_cores} ==")
