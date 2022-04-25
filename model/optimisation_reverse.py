@@ -84,7 +84,7 @@ class Optimizer:
             print(pin_opt(x_params_est,buy_and_sell))
             print("optimizer")
             # add bounds quand j'ai réussi à normaliser les bounds
-            res = op.minimize(pin_opt, x0=x_params_est,method="SLSQP",args=(buy_and_sell),bounds=Bounds[:-2],options={'disp': False})
+            res = op.minimize(pin_opt, x0=x_params_est,method="SLSQP",args=(buy_and_sell),bounds=Bounds[:-2],options={'disp': True})
             # res = op.minimize(pin_opt, x0=x_params_est,method="SLSQP",args=(buy_and_sell),options={'disp': False})
             print("value of our optimizer")
             fin_res = res.x
@@ -97,6 +97,58 @@ class Optimizer:
             PIN = (fin_res[0]*fin_res[4])/((fin_res[0]*fin_res[4])+fin_res[2]+fin_res[3])
             print(f"PIN value: {PIN}")
             print("=============","\n")
+
+    def fct_test(self):
+
+        columns = ["alpha","delta","epsilon_b","epsilon_s","mu"]
+        x_init = [0.5,0.5,250,250,250]
+        # x_init = np.array([0,0,1,1,1])+0.000001
+        Bounds = []
+        d = self.par_c.process.__dict__
+        for i,k in enumerate(d):
+            Bounds.append(d[k]) #need to be no normalize
+            # print(d[k])
+
+        def pin_opt(x_params_est,buy_sell):
+
+            data_used = np.array([x_params_est,x_params_est,x_params_est,x_params_est, x_params_est])
+            data_used = pd.DataFrame(data_used,columns=columns)
+            buy_sell.index = data_used.index
+            data_concat = pd.concat([data_used,buy_sell],axis=1)
+            # print(data_concat)
+            data_norm,y = self.c_model.normalize(data_concat)
+        
+            value_model_sum = -self.c_model.model.predict(data_norm).sum()
+            
+            return value_model_sum
+
+        print(f"Number of split possible: {np.trunc(len(self.X)/5)}")
+        number_split = int(np.trunc(len(self.X)/5))
+        print(f"Number of split possible: {len(self.X)/5}")
+
+        for i in tqdm(range(number_split)):
+
+            data_test = self.X.iloc[i*5:(i+1)*5,:-1]
+            data_buy_sell = data_test.iloc[:,-2:]
+            
+            ## find a better way to do it
+            print(pin_opt(x_init, data_buy_sell))
+            print("optimizer")
+                # add bounds quand j'ai réussi à normaliser les bounds
+            res = op.minimize(pin_opt, x0=x_init,method="SLSQP",args=(data_buy_sell),bounds=Bounds[:-2],options={'disp': False})
+                # res = op.minimize(pin_opt, x0=x_params_est,method="SLSQP",args=(buy_and_sell),options={'disp': False})
+            print("value of our optimizer")
+            fin_res = res.x
+            print(res.x)
+            print("=== buy and sell === value")
+            # print(data_buy_sell)
+            print("MLE result")
+            print(res.fun)
+                
+            PIN = (fin_res[0]*fin_res[4])/((fin_res[0]*fin_res[4])+fin_res[2]+fin_res[3])
+            print(f"PIN value: {PIN}")
+            print("=============","\n")
+        
 
     def Optimize(self, init_x, x_params):
         tf_loss = tf.keras.losses.MSE
@@ -143,6 +195,6 @@ class Optimizer:
         return res, perf, pred_par
 
 optimizer = Optimizer()
-optimizer.test_optimize()
+optimizer.fct_test()
 
         
