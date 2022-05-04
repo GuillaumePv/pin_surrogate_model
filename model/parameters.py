@@ -72,9 +72,9 @@ class ParamsPin(ParamsProcess):
     def __init__(self):
         self.alpha = [0.0, 1.0]
         self.delta = [0.0, 1.0]
-        self.epsilon_b = [200, 300]
-        self.epsilon_s = [200, 300]
-        self.mu = [200, 300]
+        self.epsilon_b = [100, 600]
+        self.epsilon_s = [100, 600]
+        self.mu = [100, 600]
         self.buy = [200, 600]
         self.sell = [200, 600]
 

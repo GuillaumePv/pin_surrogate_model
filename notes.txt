@@ -28,3 +28,4 @@ Optimizer
 - voir pourquoi l'optimization ne fonctione pas
 - faire écriture des premières parties (intro, literrature review, methods)
 - discuter des graphes
+- problemes avec les derniers mu, et les deux epsilon (les valeurs ne bouge pas)

@@ -192,7 +192,7 @@ if __name__ == '__main__':
 
     buys = to_series(model.buys)
     sells = to_series(model.sells)
-    
+    print(buys)
     aoib = abs(buys-sells)
     turn = buys+sells
     alpha = to_series(model.alpha)

@@ -72,9 +72,15 @@ class NetworkModel:
                 # if len(X) > 1:
                 #     X = pd.concat(X,axis=1)
                 # print(X.shape)
-                # print(self.m.shape)
-                # print(self.std.shape)
+                # print("X")
+                # print(X)
+                # print("mean")
+                # print(self.m)
+                # print("std")
+                # print(self.std)
                 X = (X - self.m) / self.std
+                # print("X normalized")
+                # print(X)
 
             if y is not None:
                 pass
@@ -108,14 +114,6 @@ class NetworkModel:
                 c.append(cc)
 
         par_est = df[c]
-
-        # to put back if the __dict__ trick above does not do the trick
-        # if self.par.opt.process == Process.DOUBLE_EXP:
-        #     # print('double exp')
-        #     par_est = par_est[['dividend', 'kappa', 'lambda_parameter', 'nuDown', 'nuUp', 'p', 'rho', 'sigma', 'theta']]
-        # else:
-        #     par_est = par_est[['dividend','kappa', 'rho', 'sigma', 'theta']]
-        #     # print('COLUMNS', par_est.columns)
 
         return [par_est, opt_data]
 
@@ -189,6 +187,7 @@ class NetworkModel:
         ## A CHECCK !!!! ##
         ###################
 
+        #preprocessing => plus rapide
         # data_train = tf.data.TFRecordDataset(data_dir, num_parallel_reads=tf.data.experimental.AUTOTUNE)
         # data_train = data_train.map(lambda x: tf.ensure_shape(tf.io.parse_tensor(x, tf.float64), (c2 + 1)), num_parallel_calls=tf.data.experimental.AUTOTUNE)
         # data_train = data_train.map(lambda x: tr(x), num_parallel_calls=tf.data.experimental.AUTOTUNE)

@@ -117,7 +117,7 @@ class Optimizer:
             data_concat = pd.concat([data_used,buy_sell],axis=1)
             # print(data_concat)
             data_norm,y = self.c_model.normalize(data_concat)
-        
+            # print(data_norm)
             value_model_sum = -self.c_model.model.predict(data_norm).sum()
             
             return value_model_sum
@@ -129,8 +129,18 @@ class Optimizer:
         for i in tqdm(range(number_split)):
 
             data_test = self.X.iloc[i*5:(i+1)*5,:-1]
-            data_buy_sell = data_test.iloc[:,-2:]
+            # print(np.array(data_test.iloc[0,:-2]))
+            # x_init = np.array(data_test.iloc[0,:-2])
+            # print(x_init)
             
+            data_buy_sell = data_test.iloc[:,-2:]
+            eb0,es0 = np.mean(data_buy_sell['buy']), np.mean(data_buy_sell['sell'])
+            oib = data_buy_sell['buy'] - data_buy_sell['sell'] # Turnover / Order imbalance
+            u0 = np.mean(abs(oib)) # expected order imbalance = mean of absolute order imbalance
+            x_init = [0.5,0.5,eb0,es0,u0]
+            print("== new init ==")
+            print(x_init)
+            print("=====")
             ## find a better way to do it
             print(pin_opt(x_init, data_buy_sell))
             print("optimizer")
