@@ -8,7 +8,9 @@ from numpy import dtype
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
+import tensorboard
 import os
+import datetime
 from scipy.stats import norm
 from parameters import *
 import pandas as pd
@@ -31,6 +33,10 @@ class FirstLayer(tf.keras.layers.Layer):
         # print(opt_data)
         self.l1 = len(c)
         self.l2 = len(opt_data)
+
+        print("test")
+        print(self.l1)
+        print(num_outputs)
 
     def build(self,input_shape):
         self.kernel_par = self.add_weight("kernel_par",
@@ -69,8 +75,8 @@ class NetworkModel:
         if self.par.model.normalize:
             if X is not None:
                 # print(len(X))
-                # if len(X) > 1:
-                #     X = pd.concat(X,axis=1)
+                if len(X) > 1:
+                    X = pd.concat(X,axis=1)
                 # print(X.shape)
                 # print("X")
                 # print(X)
@@ -149,8 +155,8 @@ class NetworkModel:
         # prepare data sets
         ##################
         def tr(x):
-            # y = (((x[:,:c1], x[:,c1:c2]), x[:,c2:]))
-            y = (x[:c2], x[c2:])
+            y = (x[:,:c1], x[:,c1:])
+            
             return y
 
         if self.par.opt.process.name == Process.PIN.name:
@@ -159,22 +165,13 @@ class NetworkModel:
             data_dir = self.par.data.path_sim_save + 'APIN_MLE.txt'
 
         data = pd.read_csv(data_dir)
-        # data = data.to_numpy()
-        # print(tr(data)[0])
-        # print(tr(data)[1])
-        ## normalize before doing splitting data
-        # print("=== spltting data ===")
-        # print(self.split_state_data_par(data)[0])
-        # print("2nd part")
-        # print(self.split_state_data_par(data)[1])
-        # print(data.head())
         
-
         if self.model is None:
             self.create_nnet_model()
 
 
         # create splitting data
+        print(f"shape of data: {data.shape}")
         y_data = data[y]
         x_data = data[c + opt_data]
         x_data_c = data[c]
@@ -182,21 +179,17 @@ class NetworkModel:
         test_data = self.split_state_data_par(data)
         x_data, y_none = self.normalize(test_data) 
         # x_data = self.normalize([x_data_c,x_data_opt_data])[0]
-
+        #print(x_data.iloc[:,:-2],x_data.iloc[:,-2:])
         ###################
         ## A CHECCK !!!! ##
         ###################
 
-        #preprocessing => plus rapide
-        # data_train = tf.data.TFRecordDataset(data_dir, num_parallel_reads=tf.data.experimental.AUTOTUNE)
-        # data_train = data_train.map(lambda x: tf.ensure_shape(tf.io.parse_tensor(x, tf.float64), (c2 + 1)), num_parallel_calls=tf.data.experimental.AUTOTUNE)
-        # data_train = data_train.map(lambda x: tr(x), num_parallel_calls=tf.data.experimental.AUTOTUNE)
-        # data_train = data_train.batch(batch_size=self.par.model.batch_size * 1)
-
         #Create a callback that saves the model's weights
+        log_dir = "./model/logs/fit/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+        tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
         cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=self.save_dir + '/', save_weights_only=True, verbose=0, save_best_only=True)
         print('start training for', self.par.model.E, 'epochs', flush=True)
-        self.history_training = self.model.fit(x=x_data.values, y=y_data.values, validation_split=0.2,epochs=self.par.model.E, callbacks=[cp_callback], verbose=1)  # Pass callback to training
+        self.history_training = self.model.fit(x=x_data.values, y=y_data.values, validation_split=0.2, epochs=self.par.model.E ,callbacks=[tensorboard_callback,cp_callback], verbose=1)  # Pass callback to training
 
         # self.history_training = pd.DataFrame(self.history_training.history)
         # self.save()
@@ -271,7 +264,7 @@ class NetworkModel:
         L = []
         for i, l in enumerate(self.par.model.layers):
             if i == 0:
-                L.append(tf.keras.layers.Dense(l, activation="swish", input_shape=[len(self.par.process.__dict__)])) # trouver le moyen de changer ça
+                L.append(tf.keras.layers.Dense(l, activation="swish", input_dim=2, input_shape=[len(self.par.process.__dict__)])) # trouver le moyen de changer ça
                 # L.append(FirstLayer(l,self.par))
             else:
                 L.append(layers.Dense(l, activation= self.par.model.activation, dtype=tf.float64))

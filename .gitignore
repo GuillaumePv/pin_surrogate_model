@@ -4,6 +4,7 @@
 
 data/
 model_save/
+logs/
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/
