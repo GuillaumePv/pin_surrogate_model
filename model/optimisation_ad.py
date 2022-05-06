@@ -80,10 +80,10 @@ class Optimizer:
             # print(v_call)
             # print(tf.reduce_mean(v_call))
             bnd = tf.reduce_sum(tf.nn.relu(x_params - bounds) + tf.nn.relu(-(x_params + bounds))) * bound_cost
-            return tf.reduce_mean(v_call) + tf.reduce_mean(bnd) # converge ok 
+            # return tf.reduce_mean(v_call) + tf.reduce_mean(bnd) # converge ok 
             # return tf.reduce_mean(v_call) # not converge !!!
             ## Use that to minimize MLE
-            # return tf.reduce_mean(-pred[0][0]) + bnd
+            return tf.reduce_mean(-pred[0][0]) + tf.reduce_mean(bnd)
 
         ## need to convert to tensor ##
         def func_g(x_params):
