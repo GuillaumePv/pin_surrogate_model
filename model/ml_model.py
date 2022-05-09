@@ -75,15 +75,12 @@ class NetworkModel:
         if self.par.model.normalize:
             if X is not None:
                 # print(len(X))
-                if len(X) > 1:
-                    X = pd.concat(X,axis=1)
+                if __name__ == '__main__':
+                    if len(X) > 1:
+                        X = pd.concat(X,axis=1)
                 # print(X.shape)
                 # print("X")
                 # print(X)
-                # print("mean")
-                # print(self.m)
-                # print("std")
-                # print(self.std)
                 X = (X - self.m) / self.std
                 # print("X normalized")
                 # print(X)
@@ -163,15 +160,16 @@ class NetworkModel:
             data_dir = self.par.data.path_sim_save + 'PIN_MLE.txt'
         else:
             data_dir = self.par.data.path_sim_save + 'APIN_MLE.txt'
-
-        data = pd.read_csv(data_dir)
         
+        data = pd.read_csv(data_dir,on_bad_lines='skip')
+        print(f"shape of the data: {data.shape}")
+
         if self.model is None:
             self.create_nnet_model()
 
 
         # create splitting data
-        print(f"shape of data: {data.shape}")
+       
         y_data = data[y]
         x_data = data[c + opt_data]
         x_data_c = data[c]

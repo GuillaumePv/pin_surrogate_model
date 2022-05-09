@@ -24,7 +24,7 @@ class Optimizer:
 
         # à trouver le moyen de mettre dans une classe pour éviter les erreurs
         if self.par_c.opt.process.name == Process.PIN.name:
-            data_dir = self.par_c.data.path_sim_save + 'PIN_MLE.txt'
+            data_dir = self.par_c.data.path_sim_save + 'PIN_MLE_1.txt'
         else:
             data_dir = self.par_c.data.path_sim_save + 'APIN_MLE.txt'
         self.X = pd.read_csv(data_dir)
@@ -54,7 +54,7 @@ class Optimizer:
         bound_cost = tf.constant(100.0, dtype=tf.float64)
         number_echantillon = 200
 
-        test_value = self.X.iloc[0:1,:]
+        test_value = self.X.iloc[1:2,:]
         Y = test_value["MLE"]
         x_params = test_value.iloc[:,:-1]
         
@@ -80,10 +80,10 @@ class Optimizer:
             # print(v_call)
             # print(tf.reduce_mean(v_call))
             bnd = tf.reduce_sum(tf.nn.relu(x_params - bounds) + tf.nn.relu(-(x_params + bounds))) * bound_cost
-            return tf.reduce_mean(v_call) + tf.reduce_mean(bnd) # converge ok 
+            # return tf.reduce_mean(v_call) + tf.reduce_mean(bnd) # converge ok 
             # return tf.reduce_mean(v_call) # not converge !!!
             ## Use that to minimize MLE
-            # return -tf.reduce_sum(pred) + tf.reduce_mean(bnd)
+            return -tf.reduce_sum(pred) + tf.reduce_mean(bnd)
 
         ## need to convert to tensor ##
         def func_g(x_params):
