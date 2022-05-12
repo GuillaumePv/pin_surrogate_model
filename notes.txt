@@ -17,19 +17,14 @@
 => prendre 5 et ensuite optimizer avec les 5 parameters voulu
     => prendre 5 lignes et ensuite optimizer la dessus avec les mêmes paramètres
 
-Optimizer
-
--> voir si les résultats sont concluants
--> voir pour paralleliser le code
-
 ## To-DO
 - faire tableau de stat descriptive
 - voir pourquoi l'optimization ne fonctione pas
 - discuter des graphes
-- créer folder for each model
 - create method to obtain gradient
 - checker nuvolos ou aws pour le computing
 - écrire 20p cette semaine
 - add chrono for the training
 - log file to save traning, parameters
-- check predict and MSE
+- create a graph (first 100 points) => mse and r2
+- trouver le moyen de faire deux inputs

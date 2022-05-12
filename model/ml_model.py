@@ -1,7 +1,7 @@
 1# ML_model
 # Created by Guillaume Pavé, at xx.xx.xx
 
-from locale import normalize
+from locale import DAY_1, normalize
 import pickle
 import socket
 from numpy import dtype
@@ -76,8 +76,8 @@ class NetworkModel:
             if X is not None:
                 # print(len(X))
                 # if __name__ == '__main__':
-                if len(X) > 1:
-                    X = pd.concat(X,axis=1)
+                # if len(X) > 1:
+                #     X = pd.concat(X,axis=1)
                 # print(X.shape)
                 # print("X")
                 # print(X)
@@ -191,16 +191,18 @@ class NetworkModel:
         self.history_training = pd.DataFrame(self.history_training.history)
         self.save()
 
+    # good
     def predict(self, X):
-        X = self.split_state_data_par(X)
         X, y = self.normalize(X, y=None)
-
+        X = self.split_state_data_par(X)
+        X = pd.concat(X,axis=1)
         pred = self.model.predict(X.values)
         return pred
 
+    # good
     def score(self,X,y):
-        X = self.split_state_data_par(X)
         X, y = self.normalize(X, y)
+        X = self.split_state_data_par(X)
         loss, mae, mse, r2 = self.model.evaluate(X, y, verbose=0)
         df = pd.DataFrame(np.array([mae,mse,r2]))
         df = df.T
@@ -211,9 +213,31 @@ class NetworkModel:
         """
         function that generate gradient and MLE
         """
-        # In construction
+        ## need to debug for my project
+        # extract pin input
 
-        pass
+        X, y = self.normalize(X, y=None)
+        X = self.split_state_data_par(X)
+        print(X)
+
+        xx = [tf.convert_to_tensor(x.values) for x in X]
+        test = tf.concat(xx,axis=1)
+        with tf.GradientTape(persistent=True) as g:
+            g.watch(xx[0])
+            g.watch(xx[1])
+            pred = self.model(test)
+            print(pred) 
+        d = g.gradient(pred, xx[0])
+        d1 = g.gradient(pred, xx[1])
+        del g
+        print(d)
+        print(d1)
+        d = np.concatenate([d.numpy(), d1.numpy()], axis=1)
+        col = list(X[0].columns) + list(X[1].columns)
+
+        d = pd.DataFrame(d, columns=col, index=X[0].index)
+        d = d*(1/self.std)
+        return d
 
     def save(self, other_save_dir=None):
         """

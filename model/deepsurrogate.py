@@ -53,9 +53,12 @@ class Optimizer:
         y = test.iloc[:,-1:]
         # x_split = self.c_model.split_state_data_par(x)
         # x_norm = self.c_model.normalize(x_split)[0]
-        # pred = self.c_model.predict(x_norm)
-        print(self.c_model.score(x,y))
+        pred = self.c_model.get_grad_mle(x)
+        #print(self.c_model.score(x,y))
+        # print(pred, y)
+        print(pred)
 
+    # does not converge => issue with this code
     def test_optimize(self):
         tf_loss = tf.keras.losses.MSE
         x_init = pd.DataFrame([0.5,0.5,250,250,250,250,250]).transpose()
