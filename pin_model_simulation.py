@@ -179,11 +179,11 @@ def simulation(numb_simu):
     ## Daily simulation ##
     
     ## Hidden factor ##
-    a = np.random.uniform(0,0.9,1)[0] # [0,1]
-    d = np.random.uniform(0,0.9,1)[0] # [0,1]
-    es = int(np.random.uniform(200,300,1)[0]) # create cluster (frequent (2300), infrequent (150), heavy (5600) => mean) 
-    eb = int(np.random.uniform(200,300,1)[0])
-    mu = int(np.random.uniform(200,300,1)[0])
+    a = np.random.uniform(0,0.999,1)[0] # [0,1]
+    d = np.random.uniform(0,0.999,1)[0] # [0,1]
+    es = int(np.random.uniform(100,300,1)[0]) # create cluster (frequent (2300), infrequent (150), heavy (5600) => mean) 
+    eb = int(np.random.uniform(100,300,1)[0])
+    mu = int(np.random.uniform(100,300,1)[0])
     # number of firm
     N = 1
     T = 1 # yearly => Monthly, weekly
