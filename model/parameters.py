@@ -101,7 +101,9 @@ class ParamsModels:
         self.activation = "swish"
         self.opti = Optimizer.ADAM # use this
         self.loss = Loss.MSE
+
         self.learning_rate = 0.5e-2
+
         self.E = 15
 
 class ParamsData:

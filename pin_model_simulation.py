@@ -179,8 +179,10 @@ def simulation(numb_simu):
     ## Daily simulation ##
     
     ## Hidden factor ##
+
     a = np.random.uniform(0,0.99,1)[0] # [0,1]
     d = np.random.uniform(0,0.99,1)[0] # [0,1]
+
     es = int(np.random.uniform(100,300,1)[0]) # create cluster (frequent (2300), infrequent (150), heavy (5600) => mean) 
     eb = int(np.random.uniform(100,300,1)[0])
     mu = int(np.random.uniform(100,300,1)[0])

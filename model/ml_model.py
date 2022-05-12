@@ -29,14 +29,8 @@ class FirstLayer(tf.keras.layers.Layer):
             if (cc not in opt_data):
                 c.append(cc)
         
-        # print(c)
-        # print(opt_data)
         self.l1 = len(c)
         self.l2 = len(opt_data)
-
-        print("test")
-        print(self.l1)
-        print(num_outputs)
 
     def build(self,input_shape):
         self.kernel_par = self.add_weight("kernel_par",
@@ -47,13 +41,11 @@ class FirstLayer(tf.keras.layers.Layer):
                                                     self.num_outputs], dtype=tf.float64)
 
     def call(self,input):
-        print("=== input ===")
-        print(tf.print(input[0]))
-        ## bug icis
-        r = tf.matmul(input[0], self.kernel_par) + tf.matmul(input[1], self.kernel_state)
-        # r = tf.matmul(tf.transpose(input[0]), self.kernel_par) +tf.matmul(tf.transpose(input[1]), self.kernel_state)
+        
+        r = tf.matmul(input[0], self.kernel_par) + tf.matmul(tf.cast(input[1],tf.float64), self.kernel_state)
+        
         r = tf.nn.swish(r)
-        return input
+        return r
 
 
 
@@ -74,16 +66,9 @@ class NetworkModel:
     def normalize(self, X=None, y=None):
         if self.par.model.normalize:
             if X is not None:
-                # print(len(X))
-                # if __name__ == '__main__':
-                # if len(X) > 1:
-                #     X = pd.concat(X,axis=1)
-                # print(X.shape)
-                # print("X")
-                # print(X)
+
+                
                 X = (X - self.m) / self.std
-                # print("X normalized")
-                # print(X)
 
             if y is not None:
                 pass
@@ -174,8 +159,13 @@ class NetworkModel:
         x_data = data[c + opt_data]
         x_data_c = data[c]
         x_data_opt_data = data[opt_data]
-        test_data = self.split_state_data_par(data)
-        x_data, y_none = self.normalize(test_data) 
+
+        
+        x_data, y_none = self.normalize(x_data)
+        final_data = self.split_state_data_par(data)
+
+   
+
         #print(x_data.iloc[:,:-2],x_data.iloc[:,-2:])
         # ###################
         # ## A CHECCK !!!! ##
@@ -186,7 +176,9 @@ class NetworkModel:
         tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
         cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=self.save_dir + '/', save_weights_only=True, verbose=0, save_best_only=True)
         print('start training for', self.par.model.E, 'epochs', flush=True)
-        self.history_training = self.model.fit(x=x_data.values, y=y_data.values, validation_split=0.1, batch_size=self.par.model.batch_size, epochs=self.par.model.E ,callbacks=[tensorboard_callback,cp_callback], verbose=1, use_multiprocessing=True)  # Pass callback to training
+
+        self.history_training = self.model.fit(x=final_data, y=y_data.values, validation_split=0.1, batch_size=self.par.model.batch_size, epochs=self.par.model.E ,callbacks=[tensorboard_callback,cp_callback], verbose=1,use_multiprocessing=True)  # Pass callback to training
+
 
         self.history_training = pd.DataFrame(self.history_training.history)
         self.save()
@@ -294,8 +286,8 @@ class NetworkModel:
         L = []
         for i, l in enumerate(self.par.model.layers):
             if i == 0:
-                L.append(tf.keras.layers.Dense(l, activation="swish", input_dim=2, input_shape=[len(self.par.process.__dict__)])) # trouver le moyen de changer ça
-                # L.append(FirstLayer(l,self.par))
+                # L.append(tf.keras.layers.Dense(l, activation="swish", input_dim=2, input_shape=[len(self.par.process.__dict__)])) # trouver le moyen de changer ça
+                L.append(FirstLayer(l,self.par))
             else:
                 L.append(layers.Dense(l, activation= self.par.model.activation, dtype=tf.float64))
 
@@ -327,6 +319,7 @@ class NetworkModel:
             self.model.compile(loss='mae', optimizer=optimizer, metrics=['mae', 'mse', r_square])
         if self.par.model.loss == Loss.MSE:
             self.model.compile(loss='mse', optimizer=optimizer, metrics=['mae', 'mse', r_square])
+        # print(self.model.summary())
 
 if __name__ == "__main__":
     # df = pd.read_csv("./data/data_from_VM/PIN_MLE.txt",encoding='utf-8',error_bad_lines=False)
