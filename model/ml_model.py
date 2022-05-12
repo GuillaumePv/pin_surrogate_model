@@ -1,7 +1,7 @@
 1# ML_model
 # Created by Guillaume Pavé, at xx.xx.xx
 
-from locale import normalize
+from locale import DAY_1, normalize
 import pickle
 import socket
 from numpy import dtype
@@ -66,6 +66,7 @@ class NetworkModel:
     def normalize(self, X=None, y=None):
         if self.par.model.normalize:
             if X is not None:
+
                 
                 X = (X - self.m) / self.std
 
@@ -144,53 +145,91 @@ class NetworkModel:
             data_dir = self.par.data.path_sim_save + 'PIN_MLE_new.txt'
         else:
             data_dir = self.par.data.path_sim_save + 'APIN_MLE.txt'
-
-        data = pd.read_csv(data_dir)
         
+        data = pd.read_csv(data_dir,on_bad_lines='skip')
+        print(f"shape of the data: {data.shape}")
+
         if self.model is None:
             self.create_nnet_model()
 
 
         # create splitting data
-        print(f"shape of data: {data.shape}")
+       
         y_data = data[y]
         x_data = data[c + opt_data]
         x_data_c = data[c]
         x_data_opt_data = data[opt_data]
+
         
         x_data, y_none = self.normalize(x_data)
         final_data = self.split_state_data_par(data)
 
-        # x_data = self.normalize([x_data_c,x_data_opt_data])[0]
+   
+
         #print(x_data.iloc[:,:-2],x_data.iloc[:,-2:])
-        ###################
-        ## A CHECCK !!!! ##
-        ###################
+        # ###################
+        # ## A CHECCK !!!! ##
+        # ###################
 
         #Create a callback that saves the model's weights
         log_dir = "./model/logs/fit/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
         tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
         cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=self.save_dir + '/', save_weights_only=True, verbose=0, save_best_only=True)
         print('start training for', self.par.model.E, 'epochs', flush=True)
+
         self.history_training = self.model.fit(x=final_data, y=y_data.values, validation_split=0.1, batch_size=self.par.model.batch_size, epochs=self.par.model.E ,callbacks=[tensorboard_callback,cp_callback], verbose=1,use_multiprocessing=True)  # Pass callback to training
 
-        # self.history_training = pd.DataFrame(self.history_training.history)
-        # self.save()
 
+        self.history_training = pd.DataFrame(self.history_training.history)
+        self.save()
+
+    # good
     def predict(self, X):
-        X = self.split_state_data_par(X)
         X, y = self.normalize(X, y=None)
-
+        X = self.split_state_data_par(X)
+        X = pd.concat(X,axis=1)
         pred = self.model.predict(X.values)
         return pred
 
-    def get_pin(self, X):
-        """
-        function that generate probability of informed trading
-        """
-        # In construction
+    # good
+    def score(self,X,y):
+        X, y = self.normalize(X, y)
+        X = self.split_state_data_par(X)
+        loss, mae, mse, r2 = self.model.evaluate(X, y, verbose=0)
+        df = pd.DataFrame(np.array([mae,mse,r2]))
+        df = df.T
+        df.columns = ["mae","mse","r2"]
+        return df
 
-        pass
+    def get_grad_mle(self, X):
+        """
+        function that generate gradient and MLE
+        """
+        ## need to debug for my project
+        # extract pin input
+
+        X, y = self.normalize(X, y=None)
+        X = self.split_state_data_par(X)
+        print(X)
+
+        xx = [tf.convert_to_tensor(x.values) for x in X]
+        test = tf.concat(xx,axis=1)
+        with tf.GradientTape(persistent=True) as g:
+            g.watch(xx[0])
+            g.watch(xx[1])
+            pred = self.model(test)
+            print(pred) 
+        d = g.gradient(pred, xx[0])
+        d1 = g.gradient(pred, xx[1])
+        del g
+        print(d)
+        print(d1)
+        d = np.concatenate([d.numpy(), d1.numpy()], axis=1)
+        col = list(X[0].columns) + list(X[1].columns)
+
+        d = pd.DataFrame(d, columns=col, index=X[0].index)
+        d = d*(1/self.std)
+        return d
 
     def save(self, other_save_dir=None):
         """
@@ -283,6 +322,13 @@ class NetworkModel:
         # print(self.model.summary())
 
 if __name__ == "__main__":
+    # df = pd.read_csv("./data/data_from_VM/PIN_MLE.txt",encoding='utf-8',error_bad_lines=False)
+    # print(df.shape)
+    # print(df.isna().sum())
+    # df = df.dropna()
+    # print(df.info())
+    # df = df.astype(np.float64)
+    # print(df.info())
     par = Params()
     model = NetworkModel(par)
     model.train()

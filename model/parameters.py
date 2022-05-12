@@ -72,9 +72,9 @@ class ParamsPin(ParamsProcess):
     def __init__(self):
         self.alpha = [0.0, 1.0]
         self.delta = [0.0, 1.0]
-        self.epsilon_b = [100, 600]
-        self.epsilon_s = [100, 600]
-        self.mu = [100, 600]
+        self.epsilon_b = [200, 300]
+        self.epsilon_s = [200, 300]
+        self.mu = [200, 300]
         self.buy = [200, 600]
         self.sell = [200, 600]
 
@@ -95,13 +95,15 @@ class ParamsModels:
         self.name = Process.PIN
         self.normalize = True
         self.normalize_range = False
-        self.layers = [400,400,400,400,400,400,400]
+        self.layers = [400,400,400,400,400,400,400] # 6 hidden layer
         #self.layers = [400,400,200,100] # 0.98
         self.batch_size = 256
         self.activation = "swish"
-        self.opti = Optimizer.ADAM
+        self.opti = Optimizer.ADAM # use this
         self.loss = Loss.MSE
-        self.learning_rate = 0.1e-2
+
+        self.learning_rate = 0.5e-2
+
         self.E = 15
 
 class ParamsData:
@@ -115,6 +117,7 @@ class ParamsData:
 
 class Params:
     def __init__(self):
+        self.name_detail = ''
         self.name = ''
         self.seed = 12345
         self.model = ParamsModels()
@@ -123,7 +126,8 @@ class Params:
   
         self.process = None
         self.update_process()
-        self.update_model_name()
+        # à remettre au prochain entrainement de model
+        #self.update_model_name()
 
     def update_process(self, process=None):
         if process is not None:
@@ -140,6 +144,31 @@ class Params:
         """
         change model name
         """
+        n = self.name_detail
+        n += 'Layer_'
+        # for l in self.model.layers:
+        #     n = n + str(l)+'_'
+        if np.all(self.model.layers[0] == np.array(self.model.layers)):
+            n = n + str(len(self.model.layers)) + 'L' + str(self.model.layers[0]) + '_'
+        else:
+            for l in self.model.layers:
+                n = n + str(l) + '_'
+
+        n += self.model.activation + '_Lr'
+        n += str(self.model.learning_rate) + '_'
+        # n += str(self.model.opti)+'_'
+
+        n += self.model.opti.name + 'o' + self.model.loss.name + '_'
+        n += 'BATCH_' + str(self.model.batch_size)
+
+        n = n + 'tr_size_' + str(self.data.train_size) + 'CM'
+        # for k in self.process.__dict__.keys():
+        #     n = n + str(k) + str(self.process.__dict__[k][0]) + str(self.process.__dict__[k][1]) + '_'
+        # n = n + 'tr_size_' + str(self.data.train_size) + '_te_size_' + str(self.data.test_size)
+
+        n = n.replace('.', '_')
+        n = n.replace('-', '_')
+        self.name = n
         # In constrcution
         pass
 
