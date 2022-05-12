@@ -75,9 +75,9 @@ class NetworkModel:
         if self.par.model.normalize:
             if X is not None:
                 # print(len(X))
-                if __name__ == '__main__':
-                    if len(X) > 1:
-                        X = pd.concat(X,axis=1)
+                # if __name__ == '__main__':
+                if len(X) > 1:
+                    X = pd.concat(X,axis=1)
                 # print(X.shape)
                 # print("X")
                 # print(X)
@@ -157,7 +157,7 @@ class NetworkModel:
             return y
 
         if self.par.opt.process.name == Process.PIN.name:
-            data_dir = self.par.data.path_sim_save + 'PIN_MLE.txt'
+            data_dir = self.par.data.path_sim_save + 'PIN_MLE_new.txt'
         else:
             data_dir = self.par.data.path_sim_save + 'APIN_MLE.txt'
         
@@ -176,21 +176,20 @@ class NetworkModel:
         x_data_opt_data = data[opt_data]
         test_data = self.split_state_data_par(data)
         x_data, y_none = self.normalize(test_data) 
-        # x_data = self.normalize([x_data_c,x_data_opt_data])[0]
         #print(x_data.iloc[:,:-2],x_data.iloc[:,-2:])
-        ###################
-        ## A CHECCK !!!! ##
-        ###################
+        # ###################
+        # ## A CHECCK !!!! ##
+        # ###################
 
         #Create a callback that saves the model's weights
         log_dir = "./model/logs/fit/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
         tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
         cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=self.save_dir + '/', save_weights_only=True, verbose=0, save_best_only=True)
         print('start training for', self.par.model.E, 'epochs', flush=True)
-        self.history_training = self.model.fit(x=x_data.values, y=y_data.values, validation_split=0.2, epochs=self.par.model.E ,callbacks=[tensorboard_callback,cp_callback], verbose=1)  # Pass callback to training
+        self.history_training = self.model.fit(x=x_data.values, y=y_data.values, validation_split=0.1, batch_size=self.par.model.batch_size, epochs=self.par.model.E ,callbacks=[tensorboard_callback,cp_callback], verbose=1, use_multiprocessing=True)  # Pass callback to training
 
-        # self.history_training = pd.DataFrame(self.history_training.history)
-        # self.save()
+        self.history_training = pd.DataFrame(self.history_training.history)
+        self.save()
 
     def predict(self, X):
         X = self.split_state_data_par(X)
@@ -297,6 +296,13 @@ class NetworkModel:
             self.model.compile(loss='mse', optimizer=optimizer, metrics=['mae', 'mse', r_square])
 
 if __name__ == "__main__":
+    # df = pd.read_csv("./data/data_from_VM/PIN_MLE.txt",encoding='utf-8',error_bad_lines=False)
+    # print(df.shape)
+    # print(df.isna().sum())
+    # df = df.dropna()
+    # print(df.info())
+    # df = df.astype(np.float64)
+    # print(df.info())
     par = Params()
     model = NetworkModel(par)
     model.train()

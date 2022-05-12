@@ -179,11 +179,11 @@ def simulation(numb_simu):
     ## Daily simulation ##
     
     ## Hidden factor ##
-    a = np.random.uniform(0,0.9,1)[0] # [0,1]
-    d = np.random.uniform(0,0.9,1)[0] # [0,1]
-    es = int(np.random.uniform(200,300,1)[0]) # create cluster (frequent (2300), infrequent (150), heavy (5600) => mean) 
-    eb = int(np.random.uniform(200,300,1)[0])
-    mu = int(np.random.uniform(200,300,1)[0])
+    a = np.random.uniform(0,0.99,1)[0] # [0,1]
+    d = np.random.uniform(0,0.99,1)[0] # [0,1]
+    es = int(np.random.uniform(100,300,1)[0]) # create cluster (frequent (2300), infrequent (150), heavy (5600) => mean) 
+    eb = int(np.random.uniform(100,300,1)[0])
+    mu = int(np.random.uniform(100,300,1)[0])
     # number of firm
     N = 1
     T = 1 # yearly => Monthly, weekly
@@ -212,7 +212,7 @@ def simulation(numb_simu):
         # print(fit(buys, sells, 1))
 
         ### Initial parameters ###
-    f = open("./data/PIN_MLE.txt", "a")
+    f = open("./data/PIN_MLE_new.txt", "a")
     f.write(f"{a},{d},{es},{eb},{mu},{buys.values[0]},{sells.values[0]},{MLE}\n")
     f.close()
         # if i % 10 == 0:
@@ -243,13 +243,13 @@ if __name__ == '__main__':
     import pandas as pd
     from regressions import *
     # number of simulation
-    if os.path.isfile("./data/PIN_MLE.txt") == False:
+    if os.path.isfile("./data/PIN_MLE_new.txt") == False:
         print("=== creating simulation file ===")
-        f = open("./data/PIN_MLE.txt", "a")
+        f = open("./data/PIN_MLE_new.txt", "a")
         f.write("alpha,delta,epsilon_b,epsilon_s,mu,buy,sell,MLE\n")
         f.close()
 
-    sim = 5000000
+    sim = 2741855
     max_iter = 10
     num_cores = multiprocessing.cpu_count()
     print(f"== number of CPU: {num_cores} ==")

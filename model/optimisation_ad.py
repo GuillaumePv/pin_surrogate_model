@@ -24,7 +24,7 @@ class Optimizer:
 
         # à trouver le moyen de mettre dans une classe pour éviter les erreurs
         if self.par_c.opt.process.name == Process.PIN.name:
-            data_dir = self.par_c.data.path_sim_save + 'PIN_MLE_1.txt'
+            data_dir = self.par_c.data.path_sim_save + 'PIN_MLE_new.txt'
         else:
             data_dir = self.par_c.data.path_sim_save + 'APIN_MLE.txt'
         self.X = pd.read_csv(data_dir)
@@ -46,6 +46,15 @@ class Optimizer:
         # print(self.X.iloc[:1].values)
         # print(self.c_model.predict(self.X.iloc[:1])[0][0])
         # print(self.c_model.model.predict(self.X.iloc[:1,:-1].values))
+
+    def prediction(self):
+        test = self.X.iloc[:3,:]
+        x = test.iloc[:,:-1]
+        y = test.iloc[:,-1:]
+        x_split = self.c_model.split_state_data_par(x)
+        x_norm = self.c_model.normalize(x_split)[0]
+        pred = self.c_model.predict(x_norm)
+        print(pred,y)
 
     def test_optimize(self):
         tf_loss = tf.keras.losses.MSE
@@ -80,10 +89,10 @@ class Optimizer:
             # print(v_call)
             # print(tf.reduce_mean(v_call))
             bnd = tf.reduce_sum(tf.nn.relu(x_params - bounds) + tf.nn.relu(-(x_params + bounds))) * bound_cost
-            # return tf.reduce_mean(v_call) + tf.reduce_mean(bnd) # converge ok 
+            return tf.reduce_mean(v_call) + tf.reduce_mean(bnd) # converge ok 
             # return tf.reduce_mean(v_call) # not converge !!!
             ## Use that to minimize MLE
-            return -tf.reduce_sum(pred) + tf.reduce_mean(bnd)
+            # return -tf.reduce_sum(pred) + tf.reduce_mean(bnd)
 
         ## need to convert to tensor ##
         def func_g(x_params):
@@ -94,8 +103,10 @@ class Optimizer:
             grads = tape.gradient(loss_value,[x_params])
             return loss_value, grads[0]
 
-        x_init = pd.DataFrame([0.5,0.5,250,250,250]).transpose()
-        # x_init = tf.convert_to_tensor(x_init, tf.double)
+        x_init = pd.DataFrame([0.00001,0.00001,0.00001,0.00001,0.00001]).transpose()
+        #x_init = test_value.iloc[:,:-1]
+        print(x_init)
+        x_init = tf.convert_to_tensor(x_init, tf.double)
         x_init = tf.convert_to_tensor(x_init)
         print(x_init)
         s = time.time()
@@ -117,11 +128,11 @@ class Optimizer:
         res = res.T
         PIN = (res['alpha']*res['mu'])/((res['alpha']*res['mu'])+res['epsilon_b']+res['epsilon_s'])
         print(PIN)
-        # score=self.c_model.score(self.c_model.unnormalize(pred_par)[0],Y)
+        
         
 
 
 optimizer = Optimizer()
-optimizer.test_optimize()
+optimizer.prediction()
 
         

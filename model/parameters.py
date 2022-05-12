@@ -72,9 +72,9 @@ class ParamsPin(ParamsProcess):
     def __init__(self):
         self.alpha = [0.0, 1.0]
         self.delta = [0.0, 1.0]
-        self.epsilon_b = [100, 600]
-        self.epsilon_s = [100, 600]
-        self.mu = [100, 600]
+        self.epsilon_b = [200, 300]
+        self.epsilon_s = [200, 300]
+        self.mu = [200, 300]
         self.buy = [200, 600]
         self.sell = [200, 600]
 
@@ -95,14 +95,14 @@ class ParamsModels:
         self.name = Process.PIN
         self.normalize = True
         self.normalize_range = False
-        self.layers = [400,400,400,400,400,400,400]
+        self.layers = [400,400,400,400,400,400,400] # 6 hidden layer
         #self.layers = [400,400,200,100] # 0.98
-        self.batch_size = 512
+        self.batch_size = 256
         self.activation = "swish"
-        self.opti = Optimizer.ADAM
+        self.opti = Optimizer.ADAM # use this
         self.loss = Loss.MSE
-        self.learning_rate = 0.001
-        self.E = 10
+        self.learning_rate = 0.5e-2
+        self.E = 15
 
 class ParamsData:
     def __init__(self):
