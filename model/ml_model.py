@@ -29,8 +29,6 @@ class FirstLayer(tf.keras.layers.Layer):
             if (cc not in opt_data):
                 c.append(cc)
         
-        # print(c)
-        # print(opt_data)
         self.l1 = len(c)
         self.l2 = len(opt_data)
 
@@ -43,15 +41,11 @@ class FirstLayer(tf.keras.layers.Layer):
                                                     self.num_outputs], dtype=tf.float64)
 
     def call(self,input):
-        print("=== input ===")
-        #print((input[0]))
-        #print(self.kernel_par)
-        ## bug icis
-        r = input[0] + tf.cast(input[1],tf.float64)
+        
         r = tf.matmul(input[0], self.kernel_par) + tf.matmul(tf.cast(input[1],tf.float64), self.kernel_state)
-        # r = tf.matmul(tf.transpose(input[0]), self.kernel_par) +tf.matmul(tf.transpose(input[1]), self.kernel_state)
+        
         r = tf.nn.swish(r)
-        return input
+        return r
 
 
 
@@ -72,19 +66,8 @@ class NetworkModel:
     def normalize(self, X=None, y=None):
         if self.par.model.normalize:
             if X is not None:
-                # print(len(X))
-                # if len(X) > 1:
-                #     X = pd.concat(X,axis=1)
-                # print(X.shape)
-                # print("X")
-                # print(X)
-                # print("mean")
-                # print(self.m)
-                # print("std")
-                # print(self.std)
+                
                 X = (X - self.m) / self.std
-                # print("X normalized")
-                # print(X)
 
             if y is not None:
                 pass
@@ -163,8 +146,6 @@ class NetworkModel:
             data_dir = self.par.data.path_sim_save + 'APIN_MLE.txt'
 
         data = pd.read_csv(data_dir)
-        data = data.dropna()
-        print(data.info())
         
         if self.model is None:
             self.create_nnet_model()
