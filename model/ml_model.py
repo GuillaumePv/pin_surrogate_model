@@ -198,9 +198,18 @@ class NetworkModel:
         pred = self.model.predict(X.values)
         return pred
 
-    def get_pin(self, X):
+    def score(self,X,y):
+        X = self.split_state_data_par(X)
+        X, y = self.normalize(X, y)
+        loss, mae, mse, r2 = self.model.evaluate(X, y, verbose=0)
+        df = pd.DataFrame(np.array([mae,mse,r2]))
+        df = df.T
+        df.columns = ["mae","mse","r2"]
+        return df
+
+    def get_grad_mle(self, X):
         """
-        function that generate probability of informed trading
+        function that generate gradient and MLE
         """
         # In construction
 

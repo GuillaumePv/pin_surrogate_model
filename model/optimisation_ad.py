@@ -48,13 +48,13 @@ class Optimizer:
         # print(self.c_model.model.predict(self.X.iloc[:1,:-1].values))
 
     def prediction(self):
-        test = self.X.iloc[:3,:]
+        test = self.X.iloc[:20,:]
         x = test.iloc[:,:-1]
         y = test.iloc[:,-1:]
-        x_split = self.c_model.split_state_data_par(x)
-        x_norm = self.c_model.normalize(x_split)[0]
-        pred = self.c_model.predict(x_norm)
-        print(pred,y)
+        # x_split = self.c_model.split_state_data_par(x)
+        # x_norm = self.c_model.normalize(x_split)[0]
+        # pred = self.c_model.predict(x_norm)
+        print(self.c_model.score(x,y))
 
     def test_optimize(self):
         tf_loss = tf.keras.losses.MSE
@@ -111,8 +111,8 @@ class Optimizer:
         print(x_init)
         s = time.time()
         soln = tfp.optimizer.lbfgs_minimize(func_g, x_init, max_iterations=50, tolerance=1e-60)
-        print(soln.converged)
         soln_time = np.round((time.time() - s) / 60, 2)
+        print(f"It takes: {soln_time}.")
         pred_par = soln.position.numpy()
         obj_value = soln.objective_value.numpy()
         print(pred_par[0])
