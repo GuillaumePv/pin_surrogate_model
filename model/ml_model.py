@@ -1,7 +1,6 @@
 1# ML_model
 # Created by Guillaume Pavé, at xx.xx.xx
 
-from locale import DAY_1, normalize
 import pickle
 import socket
 from numpy import dtype
