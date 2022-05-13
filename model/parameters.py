@@ -127,7 +127,7 @@ class Params:
         self.process = None
         self.update_process()
         # à remettre au prochain entrainement de model
-        #self.update_model_name()
+        self.update_model_name()
 
     def update_process(self, process=None):
         if process is not None:

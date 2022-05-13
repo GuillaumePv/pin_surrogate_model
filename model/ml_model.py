@@ -1,14 +1,16 @@
 1# ML_model
 # Created by Guillaume Pavé, at xx.xx.xx
-
+import os
 import pickle
 import socket
 from numpy import dtype
 import tensorflow as tf
+# remove tensorflow warnings
+tf.get_logger().setLevel('ERROR')
+
 from tensorflow import keras
 from tensorflow.keras import layers
 import tensorboard
-import os
 import datetime
 from scipy.stats import norm
 from parameters import *
@@ -161,7 +163,7 @@ class NetworkModel:
 
         
         x_data, y_none = self.normalize(x_data)
-        final_data = self.split_state_data_par(data)
+        final_data = self.split_state_data_par(x_data)
 
    
 
@@ -200,7 +202,7 @@ class NetworkModel:
         df.columns = ["mae","mse","r2"]
         return df
 
-    def get_grad_mle(self, X):
+    def get_grad_and_mle(self, X, return_pred=False):
         """
         function that generate gradient and MLE
         """
@@ -209,26 +211,27 @@ class NetworkModel:
 
         X, y = self.normalize(X, y=None)
         X = self.split_state_data_par(X)
-        print(X)
 
         xx = [tf.convert_to_tensor(x.values) for x in X]
-        test = tf.concat(xx,axis=1)
+        
         with tf.GradientTape(persistent=True) as g:
             g.watch(xx[0])
             g.watch(xx[1])
-            pred = self.model(test)
-            print(pred) 
+            pred = self.model(xx)
+            
         d = g.gradient(pred, xx[0])
         d1 = g.gradient(pred, xx[1])
         del g
-        print(d)
-        print(d1)
         d = np.concatenate([d.numpy(), d1.numpy()], axis=1)
         col = list(X[0].columns) + list(X[1].columns)
 
         d = pd.DataFrame(d, columns=col, index=X[0].index)
         d = d*(1/self.std)
-        return d
+
+        if return_pred:
+            return d, pred
+        else:
+            return d
 
     def save(self, other_save_dir=None):
         """

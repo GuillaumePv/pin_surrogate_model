@@ -1,8 +1,8 @@
+import os
 from numpy import float64
 import tensorflow as tf
 import tensorflow_probability as tfp
 # https://www.tensorflow.org/probability?hl=fr
-
 from ml_model import NetworkModel
 from parameters import *
 import scipy.optimize as op
@@ -39,24 +39,43 @@ class Optimizer:
         indexes = pd.Series(self.par_c.process.__dict__).index[-2:]
         self.means = self.c_model.m[indexes]
         self.std= self.c_model.std[indexes]
-        # print(self.c_model.m[test])
-        # params_df, true_opt = self.c_model.split_state_data_par(X)
+        
 
-        # print(self.c_model.model([params_df+true_opt]))
-        # print(self.X.iloc[:1].values)
-        # print(self.c_model.predict(self.X.iloc[:1])[0][0])
-        # print(self.c_model.model.predict(self.X.iloc[:1,:-1].values))
-
-    def prediction(self):
-        test = self.X.iloc[:20,:]
-        x = test.iloc[:,:-1]
+    def estimate_par_lbfgs(self):
+        COL = ["alpha","delta","epsilon_b","epsilon_s","mu"]
+        COL_PLUS = COL + self.par_c.data.cross_vary_list
+        
+        test = self.X.iloc[:1,:]
+        df = test.iloc[:,:-1]
         y = test.iloc[:,-1:]
-        # x_split = self.c_model.split_state_data_par(x)
-        # x_norm = self.c_model.normalize(x_split)[0]
-        pred = self.c_model.get_grad_mle(x)
-        #print(self.c_model.score(x,y))
-        # print(pred, y)
-        print(pred)
+
+        def func_g(x_params):
+            # génial pour faire sur plusieurs colonnes la même valeur
+            df[COL] = x_params.numpy()
+            # print("=== df ===")
+            # print(df)
+            grad, mle = self.c_model.get_grad_and_mle(df,True)
+            loss_value = np.mean(np.square(mle-y))
+            g = grad.mean()[COL].values
+
+            g = tf.convert_to_tensor(g)
+            loss_value = tf.convert_to_tensor(loss_value)
+
+            print('---',loss_value,flush=True)
+            return loss_value, g
+
+        print(self.c_model.score(df,y))
+        # init_x = df[COL].mean().values
+        # x_params = init_x
+
+        # s = time.time()
+        # soln = tfp.optimizer.lbfgs_minimize(value_and_gradients_function=func_g, initial_position=init_x, max_iterations=50, tolerance=1e-60)
+        # soln_time = np.round((time.time() - s) / 60, 2)
+        # pred_par = soln.position.numpy()
+        # obj_value = soln.objective_value.numpy()
+        # #print(soln,flush=True)
+        # print(soln_time)
+        # print(pred_par)
 
     # does not converge => issue with this code
     def test_optimize(self):
@@ -136,6 +155,6 @@ class Optimizer:
 
 
 optimizer = Optimizer()
-optimizer.prediction()
+optimizer.estimate_par_lbfgs()
 
         

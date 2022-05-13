@@ -21,10 +21,10 @@
 - faire tableau de stat descriptive
 - voir pourquoi l'optimization ne fonctione pas
 - discuter des graphes
-- create method to obtain gradient
 - checker nuvolos ou aws pour le computing
 - écrire 20p cette semaine
 - add chrono for the training
 - log file to save traning, parameters
 - create a graph (first 100 points) => mse and r2
-- trouver le moyen de faire deux inputs
+- trouver le moyen d'enlever les warning tensoflow
+- change optimizer avec le double input
