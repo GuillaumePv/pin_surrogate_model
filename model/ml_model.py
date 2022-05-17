@@ -7,6 +7,10 @@ from numpy import dtype
 import tensorflow as tf
 # remove tensorflow warnings
 tf.get_logger().setLevel('ERROR')
+tf.config.optimizer.set_jit(True)
+tf.compat.v1.OptimizerOptions(cpu_global_jit=True)
+policy = tf.keras.mixed_precision.experimental.Policy('mixed_float16')
+tf.keras.mixed_precision.experimental.set_policy(policy)
 
 from tensorflow import keras
 from tensorflow.keras import layers
@@ -178,7 +182,7 @@ class NetworkModel:
         cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=self.save_dir + '/', save_weights_only=True, verbose=0, save_best_only=True)
         print('start training for', self.par.model.E, 'epochs', flush=True)
 
-        self.history_training = self.model.fit(x=final_data, y=y_data.values, validation_split=0.1, batch_size=self.par.model.batch_size, epochs=self.par.model.E ,callbacks=[tensorboard_callback,cp_callback], verbose=1,use_multiprocessing=True)  # Pass callback to training
+        self.history_training = self.model.fit(x=final_data, y=y_data, validation_split=0.001, batch_size=self.par.model.batch_size, epochs=self.par.model.E ,callbacks=[tensorboard_callback,cp_callback], verbose=1,use_multiprocessing=True)  # Pass callback to training
 
 
         self.history_training = pd.DataFrame(self.history_training.history)
