@@ -153,7 +153,6 @@ class NetworkModel:
         if self.model is None:
             self.create_nnet_model()
 
-
         # create splitting data
        
         y_data = data[y]
@@ -179,7 +178,8 @@ class NetworkModel:
         print('start training for', self.par.model.E, 'epochs', flush=True)
 
         self.history_training = self.model.fit(x=final_data, y=y_data.values, validation_split=0.1, batch_size=self.par.model.batch_size, epochs=self.par.model.E ,callbacks=[tensorboard_callback,cp_callback], verbose=1,use_multiprocessing=True)  # Pass callback to training
-
+        with open('modelsummary.txt', 'w') as f:
+            self.model.summary(print_fn=lambda x: f.write(x + '\n'))
 
         self.history_training = pd.DataFrame(self.history_training.history)
         self.save()
@@ -321,7 +321,6 @@ class NetworkModel:
             self.model.compile(loss='mae', optimizer=optimizer, metrics=['mae', 'mse', r_square])
         if self.par.model.loss == Loss.MSE:
             self.model.compile(loss='mse', optimizer=optimizer, metrics=['mae', 'mse', r_square])
-        # print(self.model.summary())
 
 if __name__ == "__main__":
     # df = pd.read_csv("./data/data_from_VM/PIN_MLE.txt",encoding='utf-8',error_bad_lines=False)
