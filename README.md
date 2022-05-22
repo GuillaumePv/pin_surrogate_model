@@ -21,20 +21,50 @@ self.layers = [400,200,100] 0.93 R2
 self.layers = [400,200,100,50] # 0.9416 R2
 
 [400,400,200,100] => 0.9898 R2
-## TO-DO
 
-- [x] see each MLE is equal tp sum of MLE
-- [x] it is possible to normalize data in order to have one model for all
-see to contact professor
-- [ ] chekc how work optimizer
-- [ ] use First layer to optimize data
-- [x] trouver le moyen de changer l'input
 
 
 
 ## Instruction
 
-In construction
+## Instructions for running the project
+
+1) Clone project
+
+```bash
+git clone https://github.com/GuillaumePv/lowbeta_cryptocurrency.git
+```
+
+2) Go into project folder
+
+```bash
+cd pin_surrogate_model
+```
+
+3) Create your virtual environment (optional)
+
+```bash
+python3 -m venv venv
+```
+
+4) Enter in your virtual environment (optional)
+
+* Mac OS / linux
+```bash
+source venv/bin/activate venv venv
+```
+
+* Windows
+```bash
+.\venv\Scripts\activate
+```
+
+5) Install libraries
+
+* Python 3
+```bash
+pip3 install -r requirements.txt
+```
 
 ## Parameter range
 
