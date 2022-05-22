@@ -30,7 +30,7 @@ self.layers = [400,200,100,50] # 0.9416 R2
 1) Clone project
 
 ```bash
-git clone https://github.com/GuillaumePv/lowbeta_cryptocurrency.git
+git clone https://github.com/GuillaumePv/pin_surrogate_model.git
 ```
 
 2) Go into project folder
