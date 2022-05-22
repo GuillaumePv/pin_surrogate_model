@@ -12,7 +12,7 @@ import time
 from tqdm import tqdm
 
 # add params args
-class Optimizer:
+class DeepSurrogate:
     def __init__(self):
         #print('Loading model', call_model_name)
         par_c = Params()
@@ -154,7 +154,7 @@ class Optimizer:
         
 
 
-optimizer = Optimizer()
+optimizer = DeepSurrogate()
 optimizer.estimate_par_lbfgs()
 
         
