@@ -4,24 +4,16 @@
 2. I create a NN to replace le likelihood function
 3. I need to optimize my NN 
 
-## problem with optimization
-- chang only hidden state
-- same for an addition
-
--> voir pour faire avec des tensorflow et comprendre comment faire
-
--> optimizer Antoine:
-=> retrouver les paramètres de départ
-
-
-=> prendre 5 et ensuite optimizer avec les 5 parameters voulu
-    => prendre 5 lignes et ensuite optimizer la dessus avec les mêmes paramètres
-
 ## To-DO
 - faire tableau de stat descriptive
-- discuter des graphes
 - add chrono for the training
 - log file to save traning, parameters
 - create a graph (first 100 points) => mse and r2
 - faire écrire un algo pour la training procédure
+- create table with parameters
+- debug optimizer
 
+
+https://machinelearningmastery.com/understand-the-dynamics-of-learning-rate-on-deep-learning-neural-networks/
+
+0.744

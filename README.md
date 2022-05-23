@@ -21,6 +21,31 @@ self.layers = [400,200,100] 0.93 R2
 self.layers = [400,200,100,50] # 0.9416 R2
 
 [400,400,200,100] => 0.9898 R2
+10 layer of 400 neurons
+20mio (5 epoch)
+0.485 / 0.77 / 0.8453 / 0.8669 /0.8782
+r2: 0.8782 => 20mio points
+30mio (5 epoch) => a little bit better
+0.57 / 0.8167 / 0.8492 / 0.883 / 
+r2: 0.89
+
+0.5840 / 0.84 / 0.8716 / bug ....
+9 layers of 400 neurons
+20mio
+
+
+10mio
+
+ self.layers = [400,400,400,400,400,400,400,400,400,400,400] # 6 hidden layer
+        #self.layers = [400,400,200,100] # 0.98
+        self.batch_size = 256*2
+        self.activation = "swish"
+        self.opti = Optimizer.ADAM # use this
+        self.loss = Loss.MSE
+
+        self.learning_rate = 0.1e-2
+
+        self.E = 5
 ## TO-DO
 
 - [x] see each MLE is equal tp sum of MLE
