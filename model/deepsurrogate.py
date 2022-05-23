@@ -42,7 +42,7 @@ class Optimizer:
         self.std= self.c_model.std[indexes]
         
 
-    def estimate_par_lbfgs(self,num=3):
+    def estimate_par_lbfgs(self,num=5):
         COL = ["alpha","delta","epsilon_b","epsilon_s","mu"]
         COL_PLUS = COL + self.par_c.data.cross_vary_list
         
@@ -66,17 +66,17 @@ class Optimizer:
             return loss_value, g
         s = time.time()
         for i in tqdm(range(data.shape[0])):
-            df = data.loc[i].to_frame()
-            
+            df = data.loc[i].to_frame().transpose()
+            # init_x = df[COL].values
             y = data["MLE"].loc[i]
             
             soln = tfp.optimizer.lbfgs_minimize(value_and_gradients_function=func_g, initial_position=init_x, max_iterations=50, tolerance=1e-60)
-            print(soln.converged)
             pred_par = soln.position.numpy()
             obj_value = soln.objective_value.numpy()
             #print(soln,flush=True)
             
             print(pred_par)
+            print(obj_value)
             
         
         soln_time = np.round((time.time() - s) / 60, 2)
@@ -112,7 +112,6 @@ class Optimizer:
         # init_x = df[COL].mean().values
         init_x = self.means.values
         
-
         s = time.time()
         soln = tfp.optimizer.lbfgs_minimize(value_and_gradients_function=func_g, initial_position=init_x, max_iterations=50, tolerance=1e-60)
         soln_time = np.round((time.time() - s) / 60, 2)
@@ -123,7 +122,7 @@ class Optimizer:
 
 
 optimizer = Optimizer()
-optimizer.estimate_par_lbfgs()
+optimizer.get_pin()
 
 
         
