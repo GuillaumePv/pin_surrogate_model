@@ -1,0 +1,1228 @@
+
+   
+<!doctype html>
+<html lang="en">
+<head>
+<title>A comparison of some structural models of private information arrival</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="Org-mode">
+<meta name="author" content="Jefferson Duarte, Edwin Hu, and Lance Young">
+
+<link  href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<style type="text/css">
+/* org mode styles on top of twbs */
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    font-size: 18px;
+    margin-bottom: 105px;
+}
+
+footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 101px;
+    background-color: #f5f5f5;
+}
+
+footer > div {
+    padding: 10px;
+}
+
+footer p {
+    margin: 0 0 5px;
+    text-align: center;
+    font-size: 16px;
+}
+
+#table-of-contents {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+blockquote p {
+    font-size: 18px;
+}
+
+pre {
+    font-size: 16px;
+}
+
+.footpara {
+    display: inline-block;
+}
+
+figcaption {
+  font-size: 16px;
+  color: #666;
+  font-style: italic;
+  padding-bottom: 15px;
+}
+
+/* from twbs docs */
+
+.bs-docs-sidebar.affix {
+    position: static;
+}
+@media (min-width: 768px) {
+    .bs-docs-sidebar {
+        padding-left: 20px;
+    }
+}
+
+/* All levels of nav */
+.bs-docs-sidebar .nav > li > a {
+    display: block;
+    padding: 4px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #999;
+}
+.bs-docs-sidebar .nav > li > a:hover,
+.bs-docs-sidebar .nav > li > a:focus {
+    padding-left: 19px;
+    color: #A1283B;
+    text-decoration: none;
+    background-color: transparent;
+    border-left: 1px solid #A1283B;
+}
+.bs-docs-sidebar .nav > .active > a,
+.bs-docs-sidebar .nav > .active:hover > a,
+.bs-docs-sidebar .nav > .active:focus > a {
+    padding-left: 18px;
+    font-weight: bold;
+    color: #A1283B;
+    background-color: transparent;
+    border-left: 2px solid #A1283B;
+}
+
+/* Nav: second level (shown on .active) */
+.bs-docs-sidebar .nav .nav {
+    display: none; /* Hide by default, but at >768px, show it */
+    padding-bottom: 10px;
+}
+.bs-docs-sidebar .nav .nav > li > a {
+    padding-top: 1px;
+    padding-bottom: 1px;
+    padding-left: 30px;
+    font-size: 12px;
+    font-weight: normal;
+}
+.bs-docs-sidebar .nav .nav > li > a:hover,
+.bs-docs-sidebar .nav .nav > li > a:focus {
+    padding-left: 29px;
+}
+.bs-docs-sidebar .nav .nav > .active > a,
+.bs-docs-sidebar .nav .nav > .active:hover > a,
+.bs-docs-sidebar .nav .nav > .active:focus > a {
+    padding-left: 28px;
+    font-weight: 500;
+}
+
+/* Nav: third level (shown on .active) */
+.bs-docs-sidebar .nav .nav .nav {
+    padding-bottom: 10px;
+}
+.bs-docs-sidebar .nav .nav .nav > li > a {
+    padding-top: 1px;
+    padding-bottom: 1px;
+    padding-left: 40px;
+    font-size: 12px;
+    font-weight: normal;
+}
+.bs-docs-sidebar .nav .nav .nav > li > a:hover,
+.bs-docs-sidebar .nav .nav .nav > li > a:focus {
+    padding-left: 39px;
+}
+.bs-docs-sidebar .nav .nav .nav > .active > a,
+.bs-docs-sidebar .nav .nav .nav > .active:hover > a,
+.bs-docs-sidebar .nav .nav .nav > .active:focus > a {
+    padding-left: 38px;
+    font-weight: 500;
+}
+
+/* Show and affix the side nav when space allows it */
+@media (min-width: 992px) {
+    .bs-docs-sidebar .nav > .active > ul {
+        display: block;
+    }
+    /* Widen the fixed sidebar */
+    .bs-docs-sidebar.affix,
+    .bs-docs-sidebar.affix-bottom {
+        width: 213px;
+    }
+    .bs-docs-sidebar.affix {
+        position: fixed; /* Undo the static from mobile first approach */
+        top: 20px;
+    }
+    .bs-docs-sidebar.affix-bottom {
+        position: absolute; /* Undo the static from mobile first approach */
+    }
+    .bs-docs-sidebar.affix .bs-docs-sidenav,.bs-docs-sidebar.affix-bottom .bs-docs-sidenav {
+        margin-top: 0;
+        margin-bottom: 0
+    }
+}
+@media (min-width: 1200px) {
+    /* Widen the fixed sidebar again */
+    .bs-docs-sidebar.affix-bottom,
+    .bs-docs-sidebar.affix {
+        width: 263px;
+    }
+}
+</style>
+<script type="text/javascript">
+$(function() {
+    'use strict';
+
+    $('.bs-docs-sidebar li').first().addClass('active');
+
+    $(document.body).scrollspy({target: '.bs-docs-sidebar'});
+
+    $('.bs-docs-sidebar').affix();
+});
+</script><!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-67919104-2"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'UA-67919104-2');
+</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  displayAlign: "center",
+  displayIndent: "2em",
+  messageStyle: "none",
+  "HTML-CSS": {
+    scale: 100,
+    styles: {
+      ".MathJax_Display": {
+        "font-size": "100%"
+      }
+    }
+  },
+  "SVG": {
+    scale: 100,
+    styles: {
+      ".MathJax_SVG_Display": {
+        "font-size": "100%",
+        "margin-left": "-2.281em"
+      }
+    }
+  }
+});
+</script>
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_SVG"></script>
+</head>
+<body>
+<div id="content" class="container">
+<div class="row"><div class="col-md-9"><h1 class="title">A comparison of some structural models of private information arrival</h1>
+<p>
+Jefferson Duarte, Edwin Hu, and Lance Young
+</p>
+
+<div id="outline-container-paper" class="outline-2">
+<h2 id="paper"><a id="sec-" name="sec-"></a>Paper</h2>
+<div class="outline-text-2" id="text-paper">
+<p>
+Latest version available at SSRN: <a href="https://ssrn.com/abstract=2564369">https://ssrn.com/abstract=2564369</a>
+</p>
+</div>
+
+<div id="outline-container-prev" class="outline-3">
+<h3 id="prev"><a id="sec-" name="sec-"></a>Previous Versions</h3>
+<div class="outline-text-3" id="text-prev">
+<ul class="org-ul">
+<li><a href="./JFE_4.pdf">JFE #4 2018-12-17</a>
+</li>
+<li><a href="./JFE_3.pdf">JFE #3 2017-11-24</a>
+</li>
+<li><a href="./JFE_2.pdf">JFE #2 2017-09-07</a>
+</li>
+<li><a href="./JFE_1.pdf">JFE #1 2017-03-10</a>
+</li>
+<li><a href="./JF_2.pdf">JF #2 2016-04-29</a>
+</li>
+<li><a href="./JF_1.pdf">JF #1 2015-05-01</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+<div id="outline-container-data" class="outline-2">
+<h2 id="data"><a id="sec-" name="sec-"></a>Data</h2>
+<div class="outline-text-2" id="text-data">
+<p>
+<a href="https://www.dropbox.com/s/45b42e89gaafg0n/cpie_data.zip?dl=1">https://www.dropbox.com/s/45b42e89gaafg0n/cpie_data.zip?dl=1</a>
+</p>
+
+<p>
+The data contains several files:
+</p>
+<ul class="org-ul">
+<li><code>cpie_daily.csv</code>
+</li>
+<li><code>eo_yearly.csv</code>
+</li>
+<li><code>dy_yearly.csv</code>
+</li>
+<li><code>gpin_yearly.csv</code>
+</li>
+<li><code>owr_yearly.csv</code>
+</li>
+</ul>
+</div>
+
+<div id="outline-container-daily" class="outline-3">
+<h3 id="daily"><a id="sec-" name="sec-"></a>Daily</h3>
+<div class="outline-text-3" id="text-daily">
+<p>
+<code>cpie_daily.csv</code> is sorted by <code>permno</code> and <code>date</code>:
+</p>
+<table class="table table-striped table-bordered table-hover table-condensed">
+
+
+<colgroup>
+<col  class="right">
+
+<col  class="right">
+
+<col  class="right">
+
+<col  class="right">
+
+<col  class="right">
+
+<col  class="right">
+
+<col  class="right">
+
+<col  class="right">
+
+<col  class="right">
+
+<col  class="right">
+
+<col  class="right">
+
+<col  class="right">
+
+<col  class="right">
+
+<col  class="right">
+</colgroup>
+<tbody>
+<tr>
+<td class="text-right">permno</td>
+<td class="text-right">year</td>
+<td class="text-right">date</td>
+<td class="text-right">cpie_pin</td>
+<td class="text-right">cpie_dy</td>
+<td class="text-right">cpie_gpin</td>
+<td class="text-right">cpie_owr</td>
+<td class="text-right">cpie_mech</td>
+<td class="text-right">ret_o</td>
+<td class="text-right">ret_d</td>
+<td class="text-right">y_e</td>
+<td class="text-right">n_buys</td>
+<td class="text-right">n_sells</td>
+<td class="text-right">turn</td>
+</tr>
+
+<tr>
+<td class="text-right">10057</td>
+<td class="text-right">1993</td>
+<td class="text-right">19930104</td>
+<td class="text-right">0.0050</td>
+<td class="text-right">0.608</td>
+<td class="text-right">0.011</td>
+<td class="text-right">0.85</td>
+<td class="text-right">0</td>
+<td class="text-right">-0.007</td>
+<td class="text-right">-0.014</td>
+<td class="text-right">-0.35</td>
+<td class="text-right">4</td>
+<td class="text-right">7</td>
+<td class="text-right">11</td>
+</tr>
+
+<tr>
+<td class="text-right">10057</td>
+<td class="text-right">1993</td>
+<td class="text-right">19930105</td>
+<td class="text-right">0.0000</td>
+<td class="text-right">0.003</td>
+<td class="text-right">0.071</td>
+<td class="text-right">0.88</td>
+<td class="text-right">0</td>
+<td class="text-right">0.011</td>
+<td class="text-right">0.012</td>
+<td class="text-right">0.93</td>
+<td class="text-right">2</td>
+<td class="text-right">0</td>
+<td class="text-right">2</td>
+</tr>
+
+<tr>
+<td class="text-right">10057</td>
+<td class="text-right">1993</td>
+<td class="text-right">19930106</td>
+<td class="text-right">0.0007</td>
+<td class="text-right">0.212</td>
+<td class="text-right">0.014</td>
+<td class="text-right">0.91</td>
+<td class="text-right">0</td>
+<td class="text-right">-0.016</td>
+<td class="text-right">-0.014</td>
+<td class="text-right">-0.38</td>
+<td class="text-right">3</td>
+<td class="text-right">5</td>
+<td class="text-right">8</td>
+</tr>
+
+<tr>
+<td class="text-right">10057</td>
+<td class="text-right">1993</td>
+<td class="text-right">19930107</td>
+<td class="text-right">0.0257</td>
+<td class="text-right">0.131</td>
+<td class="text-right">0.433</td>
+<td class="text-right">0.82</td>
+<td class="text-right">0</td>
+<td class="text-right">0.001</td>
+<td class="text-right">0.015</td>
+<td class="text-right">0.26</td>
+<td class="text-right">8</td>
+<td class="text-right">4</td>
+<td class="text-right">12</td>
+</tr>
+
+<tr>
+<td class="text-right">10057</td>
+<td class="text-right">1993</td>
+<td class="text-right">19930108</td>
+<td class="text-right">0.0962</td>
+<td class="text-right">0.946</td>
+<td class="text-right">0.003</td>
+<td class="text-right">0.72</td>
+<td class="text-right">1</td>
+<td class="text-right">0.001</td>
+<td class="text-right">-0.007</td>
+<td class="text-right">-0.57</td>
+<td class="text-right">4</td>
+<td class="text-right">10</td>
+<td class="text-right">14</td>
+</tr>
+
+<tr>
+<td class="text-right">10057</td>
+<td class="text-right">1993</td>
+<td class="text-right">19930111</td>
+<td class="text-right">0.0011</td>
+<td class="text-right">0.009</td>
+<td class="text-right">0.281</td>
+<td class="text-right">0.69</td>
+<td class="text-right">0</td>
+<td class="text-right">0.007</td>
+<td class="text-right">-0.003</td>
+<td class="text-right">0.41</td>
+<td class="text-right">5</td>
+<td class="text-right">1</td>
+<td class="text-right">6</td>
+</tr>
+
+<tr>
+<td class="text-right">10057</td>
+<td class="text-right">1993</td>
+<td class="text-right">19930112</td>
+<td class="text-right">0.9448</td>
+<td class="text-right">0.226</td>
+<td class="text-right">0.528</td>
+<td class="text-right">0.97</td>
+<td class="text-right">1</td>
+<td class="text-right">0.016</td>
+<td class="text-right">0.022</td>
+<td class="text-right">0.11</td>
+<td class="text-right">14</td>
+<td class="text-right">12</td>
+<td class="text-right">26</td>
+</tr>
+
+<tr>
+<td class="text-right">10057</td>
+<td class="text-right">1993</td>
+<td class="text-right">19930113</td>
+<td class="text-right">0.4594</td>
+<td class="text-right">0.973</td>
+<td class="text-right">0.001</td>
+<td class="text-right">0.82</td>
+<td class="text-right">1</td>
+<td class="text-right">0.008</td>
+<td class="text-right">-0.020</td>
+<td class="text-right">-0.62</td>
+<td class="text-right">4</td>
+<td class="text-right">12</td>
+<td class="text-right">16</td>
+</tr>
+
+<tr>
+<td class="text-right">10057</td>
+<td class="text-right">1993</td>
+<td class="text-right">19930114</td>
+<td class="text-right">0.0006</td>
+<td class="text-right">0.101</td>
+<td class="text-right">0.044</td>
+<td class="text-right">0.88</td>
+<td class="text-right">0</td>
+<td class="text-right">-0.008</td>
+<td class="text-right">-0.015</td>
+<td class="text-right">-0.33</td>
+<td class="text-right">4</td>
+<td class="text-right">4</td>
+<td class="text-right">8</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+<code>cpie_pin</code> corresponds to \(CPIE_{PIN}\) in the paper (the PIN model).
+</p>
+
+<p>
+<code>cpie_dy</code> corresponds to \(CPIE_{DY}\) in the paper (the DY model).
+</p>
+
+<p>
+<code>cpie_gpin</code> corresponds to \(CPIE_{GPIN}\) in the paper (the GPIN model).
+</p>
+
+<p>
+<code>cpie_owr</code> corresponds to \(CPIE_{OWR}\) (the Odders-White and Ready
+(2008) model). 
+</p>
+
+<p>
+<code>cpie_mech</code> is the \(CPIE_{Mech}\), which is a dummy variable
+defined as:
+</p>
+\begin{equation}
+CPIE_{Mech,j,t}=%
+\begin{cases}
+0, & \text{ if }turn_{j,t}<\overline{turn}_{j} \\ 
+1, & \text{ if }turn_{j,t}\geq \overline{turn}_{j},%
+\end{cases}
+\end{equation}
+
+<p>
+<code>ret_d</code>, <code>ret_o</code>, and <code>y_e</code> correspond to \((r_d,r_o,y_e)\). 
+</p>
+
+<p>
+<code>n_buys</code> and <code>n_sells</code> corresponds to the \(B\) and \(S\), and <code>turn</code>
+is the sum, corresponding to \(turn\).
+</p>
+</div>
+</div>
+
+<div id="outline-container-eo" class="outline-3">
+<h3 id="eo"><a id="sec-" name="sec-"></a>PIN Model</h3>
+<div class="outline-text-3" id="text-eo">
+<p>
+<code>pin_yearly.csv</code> is sorted by <code>permno</code> and <code>year</code>:
+</p>
+<table class="table table-striped table-bordered table-hover table-condensed">
+
+
+<colgroup>
+<col  class="right">
+
+<col  class="right">
+
+<col  class="right">
+
+<col  class="right">
+
+<col  class="right">
+
+<col  class="right">
+
+<col  class="right">
+</colgroup>
+<tbody>
+<tr>
+<td class="text-right">permno</td>
+<td class="text-right">year</td>
+<td class="text-right">a</td>
+<td class="text-right">eb</td>
+<td class="text-right">es</td>
+<td class="text-right">u</td>
+<td class="text-right">d</td>
+</tr>
+
+<tr>
+<td class="text-right">10057</td>
+<td class="text-right">1993</td>
+<td class="text-right">0.2301</td>
+<td class="text-right">5.4697</td>
+<td class="text-right">5.7433</td>
+<td class="text-right">10.5068</td>
+<td class="text-right">0.6052</td>
+</tr>
+
+<tr>
+<td class="text-right">10057</td>
+<td class="text-right">1994</td>
+<td class="text-right">0.0810</td>
+<td class="text-right">6.9449</td>
+<td class="text-right">6.6969</td>
+<td class="text-right">34.4076</td>
+<td class="text-right">0.3984</td>
+</tr>
+
+<tr>
+<td class="text-right">10057</td>
+<td class="text-right">1995</td>
+<td class="text-right">0.2692</td>
+<td class="text-right">14.2371</td>
+<td class="text-right">16.8493</td>
+<td class="text-right">33.2753</td>
+<td class="text-right">0.8156</td>
+</tr>
+
+<tr>
+<td class="text-right">10064</td>
+<td class="text-right">1993</td>
+<td class="text-right">0.2502</td>
+<td class="text-right">45.7045</td>
+<td class="text-right">41.3353</td>
+<td class="text-right">71.4708</td>
+<td class="text-right">0.6673</td>
+</tr>
+
+<tr>
+<td class="text-right">10064</td>
+<td class="text-right">1994</td>
+<td class="text-right">0.2835</td>
+<td class="text-right">25.8929</td>
+<td class="text-right">27.7240</td>
+<td class="text-right">40.0622</td>
+<td class="text-right">0.6076</td>
+</tr>
+
+<tr>
+<td class="text-right">10064</td>
+<td class="text-right">1995</td>
+<td class="text-right">0.1656</td>
+<td class="text-right">32.7579</td>
+<td class="text-right">38.9675</td>
+<td class="text-right">94.3707</td>
+<td class="text-right">0.8213</td>
+</tr>
+
+<tr>
+<td class="text-right">10064</td>
+<td class="text-right">1996</td>
+<td class="text-right">0.1910</td>
+<td class="text-right">27.7305</td>
+<td class="text-right">39.9372</td>
+<td class="text-right">94.2733</td>
+<td class="text-right">0.8373</td>
+</tr>
+
+<tr>
+<td class="text-right">10071</td>
+<td class="text-right">1993</td>
+<td class="text-right">0.2755</td>
+<td class="text-right">15.2707</td>
+<td class="text-right">14.3848</td>
+<td class="text-right">22.8094</td>
+<td class="text-right">0.6077</td>
+</tr>
+
+<tr>
+<td class="text-right">10071</td>
+<td class="text-right">1994</td>
+<td class="text-right">0.2000</td>
+<td class="text-right">12.8310</td>
+<td class="text-right">14.1135</td>
+<td class="text-right">24.6615</td>
+<td class="text-right">0.6733</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+<code>a</code> is \(\alpha\), <code>eb</code> is \(\varepsilon_B\), <code>es</code> is \(\varepsilon_S\), <code>u</code> is \(\mu\), and <code>d</code> is \(\delta\). 
+</p>
+</div>
+</div>
+
+<div id="outline-container-dy" class="outline-3">
+<h3 id="dy"><a id="sec-" name="sec-"></a>DY Model</h3>
+<div class="outline-text-3" id="text-dy">
+<p>
+<code>dy_yearly.csv</code> is sorted by <code>permno</code> and <code>year</code>:
+</p>
+<table class="table table-striped table-bordered table-hover table-condensed">
+
+
+<colgroup>
+<col  class="right">
+
+<col  class="right">
+
+<col  class="right">
+
+<col  class="right">
+
+<col  class="right">
+
+<col  class="right">
+
+<col  class="right">
+
+<col  class="right">
+
+<col  class="right">
+
+<col  class="right">
+
+<col  class="right">
+</colgroup>
+<tbody>
+<tr>
+<td class="text-right">permno</td>
+<td class="text-right">year</td>
+<td class="text-right">a</td>
+<td class="text-right">eb</td>
+<td class="text-right">es</td>
+<td class="text-right">ub</td>
+<td class="text-right">us</td>
+<td class="text-right">d</td>
+<td class="text-right">tn</td>
+<td class="text-right">sb</td>
+<td class="text-right">ss</td>
+</tr>
+
+<tr>
+<td class="text-right">10057</td>
+<td class="text-right">1993</td>
+<td class="text-right">0.38</td>
+<td class="text-right">4.67</td>
+<td class="text-right">3.55</td>
+<td class="text-right">10.63</td>
+<td class="text-right">5.00</td>
+<td class="text-right">0.21</td>
+<td class="text-right">0.20</td>
+<td class="text-right">7.67</td>
+<td class="text-right">7.74</td>
+</tr>
+
+<tr>
+<td class="text-right">10057</td>
+<td class="text-right">1994</td>
+<td class="text-right">0.30</td>
+<td class="text-right">4.52</td>
+<td class="text-right">4.84</td>
+<td class="text-right">10.81</td>
+<td class="text-right">9.21</td>
+<td class="text-right">0.51</td>
+<td class="text-right">0.07</td>
+<td class="text-right">26.43</td>
+<td class="text-right">32.65</td>
+</tr>
+
+<tr>
+<td class="text-right">10057</td>
+<td class="text-right">1995</td>
+<td class="text-right">0.43</td>
+<td class="text-right">11.92</td>
+<td class="text-right">9.46</td>
+<td class="text-right">26.59</td>
+<td class="text-right">10.60</td>
+<td class="text-right">0.40</td>
+<td class="text-right">0.24</td>
+<td class="text-right">21.59</td>
+<td class="text-right">25.63</td>
+</tr>
+
+<tr>
+<td class="text-right">10064</td>
+<td class="text-right">1993</td>
+<td class="text-right">0.36</td>
+<td class="text-right">35.98</td>
+<td class="text-right">37.14</td>
+<td class="text-right">31.10</td>
+<td class="text-right">69.81</td>
+<td class="text-right">0.76</td>
+<td class="text-right">0.15</td>
+<td class="text-right">82.19</td>
+<td class="text-right">30.60</td>
+</tr>
+
+<tr>
+<td class="text-right">10064</td>
+<td class="text-right">1994</td>
+<td class="text-right">0.49</td>
+<td class="text-right">16.74</td>
+<td class="text-right">24.25</td>
+<td class="text-right">21.83</td>
+<td class="text-right">45.73</td>
+<td class="text-right">0.88</td>
+<td class="text-right">0.24</td>
+<td class="text-right">27.10</td>
+<td class="text-right">21.28</td>
+</tr>
+
+<tr>
+<td class="text-right">10064</td>
+<td class="text-right">1995</td>
+<td class="text-right">0.37</td>
+<td class="text-right">27.68</td>
+<td class="text-right">31.84</td>
+<td class="text-right">39.64</td>
+<td class="text-right">43.77</td>
+<td class="text-right">0.59</td>
+<td class="text-right">0.09</td>
+<td class="text-right">103.78</td>
+<td class="text-right">39.22</td>
+</tr>
+
+<tr>
+<td class="text-right">10064</td>
+<td class="text-right">1996</td>
+<td class="text-right">0.21</td>
+<td class="text-right">26.46</td>
+<td class="text-right">38.54</td>
+<td class="text-right">78.89</td>
+<td class="text-right">124.34</td>
+<td class="text-right">0.87</td>
+<td class="text-right">0.02</td>
+<td class="text-right">226.61</td>
+<td class="text-right">623.26</td>
+</tr>
+
+<tr>
+<td class="text-right">10071</td>
+<td class="text-right">1993</td>
+<td class="text-right">0.36</td>
+<td class="text-right">11.91</td>
+<td class="text-right">11.46</td>
+<td class="text-right">11.65</td>
+<td class="text-right">17.20</td>
+<td class="text-right">0.60</td>
+<td class="text-right">0.20</td>
+<td class="text-right">23.35</td>
+<td class="text-right">14.43</td>
+</tr>
+
+<tr>
+<td class="text-right">10071</td>
+<td class="text-right">1994</td>
+<td class="text-right">0.44</td>
+<td class="text-right">9.46</td>
+<td class="text-right">11.76</td>
+<td class="text-right">11.65</td>
+<td class="text-right">15.28</td>
+<td class="text-right">0.74</td>
+<td class="text-right">0.10</td>
+<td class="text-right">30.51</td>
+<td class="text-right">21.51</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+<code>a</code> is \(\alpha\), <code>eb</code> is \(\varepsilon_B\), <code>es</code> is \(\varepsilon_S\),
+<code>ub</code> is \(\mu_B\), <code>us</code> is \(\mu_S\), <code>d</code> is \(\delta\), <code>tn</code> is \(\theta\),
+<code>sb</code> is \(\Delta_B\), and <code>ss</code> is \(\Delta_S\).
+</p>
+</div>
+</div>
+
+<div id="outline-container-gpin" class="outline-3">
+<h3 id="gpin"><a id="sec-" name="sec-"></a>GPIN Model</h3>
+<div class="outline-text-3" id="text-gpin">
+<p>
+<code>gpin_yearly.csv</code> is sorted by <code>permno</code> and <code>year</code>:
+</p>
+<table class="table table-striped table-bordered table-hover table-condensed">
+
+
+<colgroup>
+<col  class="right">
+
+<col  class="right">
+
+<col  class="right">
+
+<col  class="right">
+
+<col  class="right">
+
+<col  class="right">
+
+<col  class="right">
+
+<col  class="right">
+</colgroup>
+<tbody>
+<tr>
+<td class="text-right">permno</td>
+<td class="text-right">year</td>
+<td class="text-right">a</td>
+<td class="text-right">r</td>
+<td class="text-right">p</td>
+<td class="text-right">eta</td>
+<td class="text-right">d</td>
+<td class="text-right">th</td>
+</tr>
+
+<tr>
+<td class="text-right">10057</td>
+<td class="text-right">1993</td>
+<td class="text-right">0.30</td>
+<td class="text-right">6.51</td>
+<td class="text-right">0.62</td>
+<td class="text-right">1.00</td>
+<td class="text-right">1.00</td>
+<td class="text-right">0.44</td>
+</tr>
+
+<tr>
+<td class="text-right">10057</td>
+<td class="text-right">1994</td>
+<td class="text-right">0.17</td>
+<td class="text-right">2.27</td>
+<td class="text-right">0.85</td>
+<td class="text-right">1.00</td>
+<td class="text-right">0.40</td>
+<td class="text-right">0.51</td>
+</tr>
+
+<tr>
+<td class="text-right">10057</td>
+<td class="text-right">1995</td>
+<td class="text-right">0.28</td>
+<td class="text-right">2.89</td>
+<td class="text-right">0.92</td>
+<td class="text-right">1.00</td>
+<td class="text-right">0.48</td>
+<td class="text-right">0.54</td>
+</tr>
+
+<tr>
+<td class="text-right">10064</td>
+<td class="text-right">1993</td>
+<td class="text-right">0.19</td>
+<td class="text-right">7.25</td>
+<td class="text-right">0.93</td>
+<td class="text-right">0.75</td>
+<td class="text-right">0.57</td>
+<td class="text-right">0.53</td>
+</tr>
+
+<tr>
+<td class="text-right">10064</td>
+<td class="text-right">1994</td>
+<td class="text-right">0.16</td>
+<td class="text-right">8.48</td>
+<td class="text-right">0.87</td>
+<td class="text-right">0.78</td>
+<td class="text-right">0.48</td>
+<td class="text-right">0.50</td>
+</tr>
+
+<tr>
+<td class="text-right">10064</td>
+<td class="text-right">1995</td>
+<td class="text-right">0.18</td>
+<td class="text-right">5.88</td>
+<td class="text-right">0.93</td>
+<td class="text-right">0.77</td>
+<td class="text-right">0.76</td>
+<td class="text-right">0.44</td>
+</tr>
+
+<tr>
+<td class="text-right">10064</td>
+<td class="text-right">1996</td>
+<td class="text-right">0.11</td>
+<td class="text-right">2.41</td>
+<td class="text-right">0.97</td>
+<td class="text-right">0.90</td>
+<td class="text-right">0.59</td>
+<td class="text-right">0.44</td>
+</tr>
+
+<tr>
+<td class="text-right">10071</td>
+<td class="text-right">1993</td>
+<td class="text-right">0.21</td>
+<td class="text-right">6.46</td>
+<td class="text-right">0.83</td>
+<td class="text-right">0.79</td>
+<td class="text-right">0.60</td>
+<td class="text-right">0.52</td>
+</tr>
+
+<tr>
+<td class="text-right">10071</td>
+<td class="text-right">1994</td>
+<td class="text-right">0.13</td>
+<td class="text-right">5.01</td>
+<td class="text-right">0.85</td>
+<td class="text-right">0.88</td>
+<td class="text-right">0.80</td>
+<td class="text-right">0.44</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+<code>a</code> is \(\alpha\), <code>r</code> is \(r\), <code>p</code> is \(p\), <code>eta</code> is \(\eta\), <code>d</code> is
+\(\delta\), and <code>th</code> is \(\theta\).
+</p>
+</div>
+</div>
+
+<div id="outline-container-owr" class="outline-3">
+<h3 id="owr"><a id="sec-" name="sec-"></a>OWR Model</h3>
+<div class="outline-text-3" id="text-owr">
+<p>
+<code>owr_yearly.csv</code> is sorted by <code>permno</code> and <code>year</code>:
+</p>
+<table class="table table-striped table-bordered table-hover table-condensed">
+
+
+<colgroup>
+<col  class="right">
+
+<col  class="right">
+
+<col  class="right">
+
+<col  class="right">
+
+<col  class="right">
+
+<col  class="right">
+
+<col  class="right">
+
+<col  class="right">
+</colgroup>
+<tbody>
+<tr>
+<td class="text-right">permno</td>
+<td class="text-right">year</td>
+<td class="text-right">a</td>
+<td class="text-right">su</td>
+<td class="text-right">sz</td>
+<td class="text-right">si</td>
+<td class="text-right">spd</td>
+<td class="text-right">spo</td>
+</tr>
+
+<tr>
+<td class="text-right">10057</td>
+<td class="text-right">1993</td>
+<td class="text-right">0.7808</td>
+<td class="text-right">0.1886</td>
+<td class="text-right">0.4790</td>
+<td class="text-right">0.0226</td>
+<td class="text-right">0.0059</td>
+<td class="text-right">0.0101</td>
+</tr>
+
+<tr>
+<td class="text-right">10057</td>
+<td class="text-right">1994</td>
+<td class="text-right">0.4135</td>
+<td class="text-right">0.1548</td>
+<td class="text-right">0.5136</td>
+<td class="text-right">0.0298</td>
+<td class="text-right">0.0074</td>
+<td class="text-right">0.0108</td>
+</tr>
+
+<tr>
+<td class="text-right">10057</td>
+<td class="text-right">1995</td>
+<td class="text-right">0.7746</td>
+<td class="text-right">0.1368</td>
+<td class="text-right">0.4319</td>
+<td class="text-right">0.0251</td>
+<td class="text-right">0.0077</td>
+<td class="text-right">0.0000</td>
+</tr>
+
+<tr>
+<td class="text-right">10064</td>
+<td class="text-right">1993</td>
+<td class="text-right">0.2991</td>
+<td class="text-right">0.1227</td>
+<td class="text-right">0.3457</td>
+<td class="text-right">0.0248</td>
+<td class="text-right">0.0085</td>
+<td class="text-right">0.0072</td>
+</tr>
+
+<tr>
+<td class="text-right">10064</td>
+<td class="text-right">1994</td>
+<td class="text-right">0.6279</td>
+<td class="text-right">0.1516</td>
+<td class="text-right">0.3194</td>
+<td class="text-right">0.0222</td>
+<td class="text-right">0.0070</td>
+<td class="text-right">0.0047</td>
+</tr>
+
+<tr>
+<td class="text-right">10064</td>
+<td class="text-right">1995</td>
+<td class="text-right">0.7526</td>
+<td class="text-right">0.1865</td>
+<td class="text-right">0.3440</td>
+<td class="text-right">0.0241</td>
+<td class="text-right">0.0073</td>
+<td class="text-right">0.0009</td>
+</tr>
+
+<tr>
+<td class="text-right">10064</td>
+<td class="text-right">1996</td>
+<td class="text-right">0.6543</td>
+<td class="text-right">0.1391</td>
+<td class="text-right">0.3481</td>
+<td class="text-right">0.0299</td>
+<td class="text-right">0.0064</td>
+<td class="text-right">0.0000</td>
+</tr>
+
+<tr>
+<td class="text-right">10071</td>
+<td class="text-right">1993</td>
+<td class="text-right">0.7885</td>
+<td class="text-right">0.1390</td>
+<td class="text-right">0.4146</td>
+<td class="text-right">0.0148</td>
+<td class="text-right">0.0045</td>
+<td class="text-right">0.0054</td>
+</tr>
+
+<tr>
+<td class="text-right">10071</td>
+<td class="text-right">1994</td>
+<td class="text-right">0.6455</td>
+<td class="text-right">0.1417</td>
+<td class="text-right">0.4427</td>
+<td class="text-right">0.0132</td>
+<td class="text-right">0.0061</td>
+<td class="text-right">0.0050</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+<code>a</code> is \(\alpha\), <code>su</code> is \(\sigma_u\), <code>sz</code> is \(\sigma_z\), <code>si</code> is \(\sigma_i\), <code>spd</code> is \(\sigma_{pd}\), and <code>spo</code> is \(\sigma_{po}\).
+</p>
+</div>
+</div>
+</div>
+
+
+
+
+
+<div id="outline-container-new" class="outline-2">
+<h2 id="new"><a id="sec-" name="sec-"></a><b><b>New data</b></b></h2>
+<div class="outline-text-2" id="text-new">
+<p>
+2013&#x2013;2019 GPIN
+and OWR estimates:<br >
+<a href="https://www.dropbox.com/s/6xaa3x5zbmvyyq1/pin-est-1319.zip?dl=1">https://www.dropbox.com/s/6xaa3x5zbmvyyq1/pin-est-1319.zip?dl=1</a>
+</p>
+
+<p>
+Based on requests from other researchers we have updated our estimates
+beyond the sample period in our paper. These estimates may be used as
+starting points for your own estimation, or used as-is. We have done
+some basic quality checks with the estimates, but not to the full
+extent of the 1993&#x2013;2012 sample from the paper. In the paper we also
+only used NYSE-listed stocks. If you have any questions, comments,
+suggestions, or find any issues please feel free to contact me. If you
+use these estimates in your work, please cite to our paper and website
+so that future researchers can find our work.
+</p>
+
+<ul class="org-ul">
+<li>Based on <a href="https://wrds-web.wharton.upenn.edu/wrds/ds/wrdsapps/intradayind/taqms/index.cfm?navId=524">WRDS DTAQ Intraday Indicators</a>.
+</li>
+<li>CRSP shrcd 10, 11 and exchcd 1, 2, 3, 4.
+</li>
+<li>Unlike the paper we do not remove distribution/event days for the OWR.
+</li>
+<li>Estimates are based on up to five random starting points.
+</li>
+</ul>
+
+
+<figure>
+<p><img src="./xom-gpin-2018.png" class="img-responsive" alt="xom-gpin-2018.png" width="80%" align="center">
+</p>
+<figcaption><span class="figure-number">Figure 1:</span> Estimates example &#x2014; XOM 2018 GPIN model</figcaption>
+</figure>
+</div>
+</div>
+<div id="outline-container-data" class="outline-2">
+<h2 id="data"><a id="sec-" name="sec-"></a>Code</h2>
+<div class="outline-text-2" id="text-data">
+<p>
+Code is now available on its own GitHub <a href="https://github.com/edwinhu/pin-code">page</a>. A detailed description of the code
+is also available <a href="./pin-code">here</a>.
+</p>
+</div>
+</div>
+</div><div class="col-md-3"><nav id="table-of-contents">
+<div id="text-table-of-contents" class="bs-docs-sidebar">
+<ul class="nav">
+<li><a href="#paper">Paper</a>
+<ul class="nav">
+<li><a href="#prev">Previous Versions</a></li>
+</ul>
+</li>
+<li><a href="#data">Data</a>
+<ul class="nav">
+<li><a href="#daily">Daily</a></li>
+<li><a href="#eo">PIN Model</a></li>
+<li><a href="#dy">DY Model</a></li>
+<li><a href="#gpin">GPIN Model</a></li>
+<li><a href="#owr">OWR Model</a></li>
+</ul>
+</li>
+<li><a href="#new"><b><b>New data</b></b></a></li>
+<li><a href="#data">Code</a></li>
+</ul>
+</div>
+</nav>
+</div></div></div>
+<footer id="postamble" class="">
+<div><p class="date">Date: 2021-01-06</p>
+<p class="author">Author: Jefferson Duarte, Edwin Hu, and Lance Young</p>
+</div>
+</footer>
+</body>
+</html>

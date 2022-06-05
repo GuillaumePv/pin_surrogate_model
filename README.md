@@ -1,10 +1,10 @@
-# Master thesis: Deep Structural estimation With an Application to PIN estimation
+# Master thesis: Deep Structural estimation With an Application to a likelihood fnction (PIN model)
 
 This package proposes an easy application of the master thesis: "Deep Structural estimation With an Application to PIN estimation"
 
 ## Abstract
 
-Create surrogate model for PIN based models
+Create surrogate model for the likelihood function of the PIN model
 
 ## Installation
 
@@ -14,8 +14,12 @@ link of the pypl library: https://test.pypi.org/project/DeepSurrogate-pin/
 
 ## Authors
 
-- Antoine Didisheim (Swiss Finance Institute, antoine.didisheim@unil.ch)
 - Guillaume Pavé (guillaumepave@gmail.com)
+
+## Supervisors
+
+- Simon Scheidegger (simon.scheidegger@unil.ch)
+- Antoine Didisheim (Swiss Finance Institute, antoine.didisheim@unil.ch)
 
 ## Model
 
@@ -78,7 +82,12 @@ The surroate can not estimate PIN probability with parameters outside of this ra
 | u  | 0  | 200
 | epsilon buys  | 0  | 300
 | epsilon sells  | 0  | 300
+| Number of buys  | 0  | 300
+| Number of sells  | 0  | 300
 
-## Prerequisitres / Installation
+# create pypl library (commands)
 
-In construction
+- create build of my library
+python -m build
+- test pypi for my library
+twine upload -r testpypi dist/*
