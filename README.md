@@ -8,7 +8,9 @@ Create surrogate model for PIN based models
 
 ## Installation
 
-pip install DeepSurrogate_pin
+pip install -i https://test.pypi.org/simple/ DeepSurrogate-pin
+
+link of the pypl library: https://test.pypi.org/project/DeepSurrogate-pin/
 
 ## Authors
 

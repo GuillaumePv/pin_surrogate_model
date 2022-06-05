@@ -3,7 +3,7 @@ from distutils.core import setup
 
 setup(
   name = 'DeepSurrogate_pin',
-  packages = ['DeepSurrogate_pin'],
+  packages = ['model'],
   version = '0.2',
   license='MIT',
   setup_requires=['wheel'],
