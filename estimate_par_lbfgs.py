@@ -53,5 +53,5 @@ for i in tqdm(range(data.shape[0])):
 soln_time = np.round((time.time() - s) / 60, 2)
 print(soln_time)
 df_ei = pd.DataFrame(list_of_ei)
+print("=== Saving results ===")
 df_ei.to_csv("./results/table/ei_results.csv",index=False)
-print(df_ei)
