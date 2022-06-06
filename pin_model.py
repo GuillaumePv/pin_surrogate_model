@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+# Based on https://edwinhu.github.io/pin/pin-code/ and https://github.com/edwinhu/pin-code 
 # numpy for matrix algebra
 import numpy as np
 from numpy import log, exp

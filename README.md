@@ -1,65 +1,74 @@
-# Master thesis: Deep Structural estimation With an Application to PIN estimation
+# Master thesis: Deep Structural estimation With an Application to a likelihood fnction (PIN model)
 
-Create surrogate model for PIN based models
-
-## Authors
-
-- Antoine Didisheim (Swiss Finance Institute, antoine.didisheim@unil.ch)
-- Guillaume Pavé (guillaumepave@gmail.com)
+This package proposes an easy application of the master thesis: "Deep Structural estimation With an Application to PIN estimation"
 
 ## Abstract
 
+Create surrogate model for the likelihood function of the PIN model
+
+## Installation
+
+pip install -i https://test.pypi.org/simple/ DeepSurrogate-pin
+
+link of the pypl library: https://test.pypi.org/project/DeepSurrogate-pin/
+
+## Authors
+
+- Guillaume Pavé (guillaumepave@gmail.com)
+
+## Supervisors
+
+- Simon Scheidegger (simon.scheidegger@unil.ch)
+- Antoine Didisheim (Swiss Finance Institute, antoine.didisheim@unil.ch)
 
 ## Model
 
-- PIN
-- APIN
-- GPIN
 
 self.layers = [400,200,100] 0.93 R2
 
 self.layers = [400,200,100,50] # 0.9416 R2
 
 [400,400,200,100] => 0.9898 R2
-10 layer of 400 neurons
-20mio (5 epoch)
-0.485 / 0.77 / 0.8453 / 0.8669 /0.8782
-r2: 0.8782 => 20mio points
-30mio (5 epoch) => a little bit better
-0.57 / 0.8167 / 0.8492 / 0.883 / 
-r2: 0.89
-
-0.5840 / 0.84 / 0.8716 / bug ....
-9 layers of 400 neurons
-20mio
-
-
-10mio
-
- self.layers = [400,400,400,400,400,400,400,400,400,400,400] # 6 hidden layer
-        #self.layers = [400,400,200,100] # 0.98
-        self.batch_size = 256*2
-        self.activation = "swish"
-        self.opti = Optimizer.ADAM # use this
-        self.loss = Loss.MSE
-
-        self.learning_rate = 0.1e-2
-
-        self.E = 5
-## TO-DO
-
-- [x] see each MLE is equal tp sum of MLE
-- [x] it is possible to normalize data in order to have one model for all
-see to contact professor
-- [ ] chekc how work optimizer
-- [ ] use First layer to optimize data
-- [x] trouver le moyen de changer l'input
-
 
 
 ## Instruction
 
-In construction
+1) Clone project
+
+```bash
+git clone https://github.com/GuillaumePv/pin_surrogate_model.git
+```
+
+2) Go into project folder
+
+```bash
+cd pin_surrogate_model
+```
+
+3) Create your virtual environment (optional)
+
+```bash
+python3 -m venv venv
+```
+
+4) Enter in your virtual environment (optional)
+
+* Mac OS / linux
+```bash
+source venv/bin/activate venv venv
+```
+
+* Windows
+```bash
+.\venv\Scripts\activate
+```
+
+5) Install libraries
+
+* Python 3
+```bash
+pip3 install -r requirements.txt
+```
 
 ## Parameter range
 
@@ -73,57 +82,12 @@ The surroate can not estimate PIN probability with parameters outside of this ra
 | u  | 0  | 200
 | epsilon buys  | 0  | 300
 | epsilon sells  | 0  | 300
+| Number of buys  | 0  | 300
+| Number of sells  | 0  | 300
 
-## Prerequisitres / Installation
+# create pypl library (commands)
 
-In construction
-
-## Acknoledgements
-
-=> put citation here
-
-- Duarte & Young
-- Young
-- Deep Structural 
-
-optimization pour trouver les parameters
- params_df, true_s, true_opt = self.c_model.split_state_data_par(X)
-        true_opt = tf.convert_to_tensor(true_opt.values)
-        tf_loss = tf.keras.losses.MSE
-
-        bounds = tf.fill((1, len(init_x)), self.pivot)
-        bound_cost = tf.constant(100.0, dtype=tf.float64)
-
-        @tf.function
-        def func(x_params):
-            x_params = tf.reshape(x_params, (1, -1))
-            par_est = x_params[:, :-1]
-            state = x_params[:, -1:]
-            pred = self.c_model.model([par_est, state, true_opt])
-            v_call = tf_loss(pred, Y)
-            bnd = tf.reduce_sum(tf.nn.relu(x_params - bounds) + tf.nn.relu(-(x_params + bounds))) * bound_cost
-            return tf.reduce_mean(v_call) + tf.reduce_mean(bnd)
-
-        @tf.function
-        def func_g(x_params):
-            with tf.GradientTape() as tape:
-                tape.watch(x_params)
-                loss_value = func(x_params)
-            grads = tape.gradient(loss_value, [x_params])
-            return loss_value, grads[0]
-
-        s = time.time()
-        soln = tfp.optimizer.lbfgs_minimize(func_g, init_x, max_iterations=50, tolerance=1e-60)
-        soln_time = np.round((time.time() - s) / 60, 2)
-        pred_par = soln.position.numpy()
-        obj_value = soln.objective_value.numpy()
-
-        for ii in range(params_df.shape[1]):
-            X.loc[:, params_df.columns[ii]] = pred_par[ii]
-        X['v0'] = pred_par[ii + 1]
-
-        score=self.c_model.score(self.c_model.unnormalize(X)[0],Y)
-
-        perf=pd.Series(list(score)+[obj_value, soln_time], index=['r2','mae','mse','obj','time'])
-        pr = self.c_model.unnormalize(X)[0].iloc[0, :]
-        res=pr[pd.Series(pr.index.tolist())[~pd.Series(pr.index.tolist()).isin(self.par_c.data.cross_vary_list)]]
+- create build of my library
+python -m build
+- test pypi for my library
+twine upload -r testpypi dist/*
