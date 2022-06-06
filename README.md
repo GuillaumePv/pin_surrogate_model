@@ -90,4 +90,9 @@ The surroate can not estimate PIN probability with parameters outside of this ra
 - create build of my library
 python -m build
 - test pypi for my library
+1st time
 twine upload -r testpypi dist/*
+
+2nd time
+- change version on the setup.py file
+twine upload -r testpypi --skip-existing dist/*
