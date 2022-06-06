@@ -238,7 +238,7 @@ def create_dataset():
     
 
 def test_performance(num=1000, create_test_data=True):
-    df = pd.read_csv("./data/PIN_MLE_10.txt")
+    df = pd.read_csv("./data/PIN_MLE_new.txt")
     COL = ["alpha","delta","epsilon_b","epsilon_s","mu","buy","sell"]
     df_num = df[COL].head(num)
     data_perf = []

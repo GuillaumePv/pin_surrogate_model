@@ -115,6 +115,7 @@ class Deepsurrogate:
         end_m = time.time()
         duration_m = end_m - start_m
         print(duration_m)
+        pd.DataFrame(self.c_model.predict(X_1000)).to_csv("./results/table/model_pred_1000.csv",index=False)
 
     def get_pin(X):
         pass
