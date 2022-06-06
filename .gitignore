@@ -3,7 +3,6 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,visualstudiocode
 
 data/
-model_save/
 logs/
 ### Python ###
 # Byte-compiled / optimized / DLL files
