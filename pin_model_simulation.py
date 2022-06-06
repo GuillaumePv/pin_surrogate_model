@@ -19,6 +19,7 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 import os
 from joblib import Parallel, delayed
 import multiprocessing
+import time
 
 class PINModel(object):
 
@@ -175,7 +176,7 @@ def compute_pin(res):
     PIN = (res['a']*res['mu'])/((res['a']*res['mu'])+res['eb']+res['es'])
     return PIN
 
-def simulation(numb_simu):
+def simulation(numb_simu, write=True):
     ## Daily simulation ##
     
     ## Hidden factor ##
@@ -214,31 +215,10 @@ def simulation(numb_simu):
         # print(fit(buys, sells, 1))
 
         ### Initial parameters ###
-    f = open("./data/PIN_MLE_new.txt", "a")
-    f.write(f"{a},{d},{es},{eb},{mu},{buys.values[0]},{sells.values[0]},{MLE}\n")
-    f.close()
-        # if i % 10 == 0:
-        #     output = f"""
-        #     alpha: {a}
-        #     delta: {d}
-        #     epsilon sell: {es}
-        #     epsilon buy: {eb}
-        #     mu: {mu}
-
-        #     ==========
-        #     PIN: {PIN}
-        #     """
-
-    # if numb_simu % 10 == 0:
-    #     output = f"""
-    #     buys: {buys.values}
-    #     sells: {sells.values}
-
-    #     ==========
-    #     PIN: {PIN}
-    #     """
-
-    #     print(output)
+    if write:
+        f = open("./data/PIN_MLE_new.txt", "a")
+        f.write(f"{a},{d},{es},{eb},{mu},{buys.values[0]},{sells.values[0]},{MLE}\n")
+        f.close()
 
 if __name__ == '__main__':
     
@@ -251,10 +231,13 @@ if __name__ == '__main__':
         f.write("alpha,delta,epsilon_b,epsilon_s,mu,buy,sell,MLE\n")
         f.close()
 
-    sim = 92
+    sim = 1000
     max_iter = 10
     num_cores = multiprocessing.cpu_count()
+    start = time.time()
     print(f"== number of CPU: {num_cores} ==")
 
-    Parallel(n_jobs=num_cores)(delayed(simulation)(i) for i in tqdm(range(sim)))
+    Parallel(n_jobs=num_cores)(delayed(simulation)(i,False) for i in tqdm(range(sim)))
+    end = time.time()
+    print(end-start)
        
