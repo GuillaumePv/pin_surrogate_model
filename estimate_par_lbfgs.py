@@ -7,7 +7,7 @@ import time
 from tqdm import tqdm
 deepsurrogate = DeepSurrogate()
 
-num = 10
+num = 1000
 print(f"=== inverse modelling for {num} rows ===")
 COL = ["alpha","delta","epsilon_b","epsilon_s","mu"]
 COL_PLUS = COL + deepsurrogate.par_c.data.cross_vary_list
