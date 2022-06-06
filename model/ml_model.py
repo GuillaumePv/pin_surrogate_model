@@ -1,4 +1,4 @@
-1# ML_model
+# ML_modelpyhon -m venv 
 # Created by Guillaume Pavé, at xx.xx.xx
 import os
 import pickle
@@ -11,6 +11,7 @@ tf.config.optimizer.set_jit(True)
 tf.compat.v1.OptimizerOptions(cpu_global_jit=True)
 policy = tf.keras.mixed_precision.experimental.Policy('mixed_float16')
 tf.keras.mixed_precision.experimental.set_policy(policy)
+print(f"Number of GPUs available: {tf.test.is_gpu_available()}")
 
 from tensorflow import keras
 from tensorflow.keras import layers
@@ -21,6 +22,7 @@ from parameters import *
 import pandas as pd
 import numpy as np
 
+tf.random.set_seed(12345)
 class FirstLayer(tf.keras.layers.Layer):
     def __init__(self, num_outputs, par):
         super(FirstLayer, self).__init__(dtype='float64')
@@ -146,6 +148,7 @@ class NetworkModel:
             
             return y
 
+        print("=== Loading data ===")
         if self.par.opt.process.name == Process.PIN.name:
             data_dir = self.par.data.path_sim_save + 'PIN_MLE_new.txt'
         else:
@@ -182,8 +185,8 @@ class NetworkModel:
         cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=self.save_dir + '/', save_weights_only=True, verbose=0, save_best_only=True)
         print('start training for', self.par.model.E, 'epochs', flush=True)
 
-        self.history_training = self.model.fit(x=final_data, y=y_data, validation_split=0.001, batch_size=self.par.model.batch_size, epochs=self.par.model.E ,callbacks=[tensorboard_callback,cp_callback], verbose=1,use_multiprocessing=True)  # Pass callback to training
-
+        self.history_training = self.model.fit(x=final_data, y=y_data, validation_split=0.01,batch_size=self.par.model.batch_size, validation_batch_size=self.par.model.batch_size,epochs=self.par.model.E ,callbacks=[tensorboard_callback,cp_callback], verbose=1,use_multiprocessing=True)  # Pass callback to training
+        
 
         self.history_training = pd.DataFrame(self.history_training.history)
         self.save()
@@ -296,6 +299,7 @@ class NetworkModel:
                 L.append(FirstLayer(l,self.par))
             else:
                 L.append(layers.Dense(l, activation= self.par.model.activation, dtype=tf.float64))
+                L.append(tf.keras.layers.BatchNormalization())
 
             L.append(layers.Dense(1,dtype=tf.float64))
             self.model = keras.Sequential(L)
@@ -325,7 +329,7 @@ class NetworkModel:
             self.model.compile(loss='mae', optimizer=optimizer, metrics=['mae', 'mse', r_square])
         if self.par.model.loss == Loss.MSE:
             self.model.compile(loss='mse', optimizer=optimizer, metrics=['mae', 'mse', r_square])
-        # print(self.model.summary())
+        
 
 if __name__ == "__main__":
     # df = pd.read_csv("./data/data_from_VM/PIN_MLE.txt",encoding='utf-8',error_bad_lines=False)
