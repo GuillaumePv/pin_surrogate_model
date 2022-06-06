@@ -180,3 +180,6 @@ cython_debug/
 # Support for Project snippet scope
 
 # End of https://www.toptal.com/developers/gitignore/api/python,visualstudiocode
+results/.DS_Store
+.DS_Store
+.DS_Store

@@ -108,7 +108,7 @@ class ParamsModels:
 
         self.learning_rate = 0.5e-3
 
-        self.E = 15
+        self.E = 50
 
 class ParamsData:
     def __init__(self):
