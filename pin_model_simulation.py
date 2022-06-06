@@ -75,6 +75,11 @@ def _ll(a, d, eb, es, u, n_buys, n_sells):
                    log(a*d)+_lf(eb+u,es,n_buys,n_sells), 
                    log(1-a)+_lf(eb,es,n_buys,n_sells)])
 
+def ll(a, d, eb, es, u, n_buys, n_sells):
+    return np.array([log(a*(1-d))+_lf(eb,es+u,n_buys,n_sells), 
+                   log(a*d)+_lf(eb+u,es,n_buys,n_sells), 
+                   log(1-a)+_lf(eb,es,n_buys,n_sells)])
+
 # CPIE: function that will compute CPIEs for real or simulated data. The computation of the CPIE depends on the likelihood function definitions          
 def compute_alpha(a, d, eb, es, u, n_buys, n_sells):
     '''Compute the conditional alpha given parameters, buys, and sells.
@@ -195,27 +200,12 @@ def simulation(numb_simu, write=True):
     model = PINModel(a,d,es,eb,mu,n=N,t=T)
 
     ## Factor ##
-    buys = to_series(model.buys)
-    sells = to_series(model.sells)
+    buys = pd.Series(model.buys)
+    sells = pd.Series(model.sells)
         
-    
-
     array_MLE = _ll(a,d,eb,es,mu,buys,sells)
     MLE = logsumexp(array_MLE,axis=0)[0]
-    # print(logsumexp(array_MLE,axis=0))
-    # print(sum(logsumexp(array_MLE,axis=0)))
-    # print(est_tab(res.results, est=['params','tvalues'], stats=['rsquared','rsquared_sp']))
-    #print(buys, sells)
-    # compute PIN 
-        
-    # resultat = fit(buys[:], sells[:],1, max_iter)
-    # PIN = compute_pin(resultat)
 
-        # problem with this function
-        # CPIE = compute_alpha(resultat['a'], resultat['d'], resultat['eb'], resultat['es'], resultat['mu'], buys, sells)
-        # print(fit(buys, sells, 1))
-
-        ### Initial parameters ###
     if write:
         f = open("./data/PIN_MLE_new.txt", "a")
         f.write(f"{a},{d},{es},{eb},{mu},{buys.values[0]},{sells.values[0]},{MLE}\n")

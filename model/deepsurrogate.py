@@ -1,18 +1,26 @@
 import os
 from numpy import float64
-import tensorflow as tf
-import tensorflow_probability as tfp
-# https://www.tensorflow.org/probability?hl=fr
-from ml_model import NetworkModel
-from parameters import *
 import scipy.optimize as op
-
 import pandas as pd
 import time
 from tqdm import tqdm
+import tensorflow as tf
+import tensorflow_probability as tfp
+# https://www.tensorflow.org/probability?hl=fr
+try:
+    from ml_model import NetworkModel
+except ModuleNotFoundError:
+    from model.ml_model import NetworkModel
+
+try:
+    from parameters import *
+except ModuleNotFoundError:
+    from model.parameters import *
+
+
 
 # add params args
-class Deepsurrogate:
+class DeepSurrogate:
     def __init__(self):
         #print('Loading model', call_model_name)
         par_c = Params()
@@ -64,15 +72,6 @@ class Deepsurrogate:
         score = self.c_model.score(self.X.head(1000),self.Y.head(1000))
         score.to_latex("./results/table/result_model.tex",index=False)
 
-    def get_perf_speed_model(self,X=None,save_file=False):
-        X_1000 = self.X.head(1000)
-        start_m = time.time()
-        self.c_model.predict(X_1000)
-        end_m = time.time()
-        duration_m = end_m - start_m
-        print(duration_m)
-        if save_file:
-            pd.DataFrame(self.c_model.predict(X_1000)).to_csv("./results/table/model_pred_1000.csv",index=False)
 
     def get_pin(X):
         pass
@@ -133,10 +132,9 @@ class Deepsurrogate:
         COL_PLUS = COL + self.par_c.data.cross_vary_list
         init_x = self.means.values
 
-        data = self.X.iloc[:20,:]
-        test = self.X.iloc[:1,:]
+        data = self.X.iloc[:100,:]
         df = data.iloc[:,:-1]
-        y = test.iloc[:,-1:]
+       
         def func_g(x_params):
             # génial pour faire sur plusieurs colonnes la même valeur
             df[COL] = x_params.numpy()
@@ -166,15 +164,15 @@ class Deepsurrogate:
             pred_par = soln.position.numpy()
             obj_value = soln.objective_value.numpy()
        
-            print(obj_value)
-            print(pred_par)
+            # print(obj_value)
+            # print(pred_par)
             # create a table with PIN, buys and sells
             PIN = np.round((pred_par[0]*pred_par[4])/((pred_par[0]*pred_par[4])+pred_par[2]+pred_par[3]),4)
-            print("=== Deep PIN value ===")
-            print(PIN)
+            # print("=== Deep PIN value ===")
+            # print(PIN)
 
 if __name__ == '__main__':
-    deepsurrogate = Deepsurrogate()
+    deepsurrogate = DeepSurrogate()
     deepsurrogate.pin_estimation()
 
 

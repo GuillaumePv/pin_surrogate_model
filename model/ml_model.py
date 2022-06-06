@@ -18,7 +18,11 @@ from tensorflow.keras import layers
 import tensorboard
 import datetime
 from scipy.stats import norm
-from parameters import *
+try:
+    from parameters import *
+except ModuleNotFoundError:
+    from model.parameters import *
+    
 import pandas as pd
 import numpy as np
 
