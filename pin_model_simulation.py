@@ -251,7 +251,7 @@ if __name__ == '__main__':
         f.write("alpha,delta,epsilon_b,epsilon_s,mu,buy,sell,MLE\n")
         f.close()
 
-    sim = 2741855
+    sim = 92
     max_iter = 10
     num_cores = multiprocessing.cpu_count()
     print(f"== number of CPU: {num_cores} ==")

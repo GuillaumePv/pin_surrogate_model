@@ -95,6 +95,10 @@ class ParamsModels:
         self.name = Process.PIN
         self.normalize = True
         self.normalize_range = False
+        # performance #
+        # 8 layer: 0.8035
+        # 7 layer: 0.78
+        # 6 layer: 0.81 (VM)
         self.layers = [400,400,400,400,400,400,400] # 6 hidden layer
         #self.layers = [400,400,200,100] # 0.98
         self.batch_size = 256
@@ -102,7 +106,7 @@ class ParamsModels:
         self.opti = Optimizer.ADAM # use this
         self.loss = Loss.MSE
 
-        self.learning_rate = 0.5e-2
+        self.learning_rate = 0.5e-3
 
         self.E = 15
 
@@ -199,7 +203,7 @@ class Params:
             except:
                 temp = pd.DataFrame(data=[key, v], index=['key', 'value']).T
                 df = df.append(temp)
-        df.to_pickle(save_dir + file_name,protocol=4)
+        df.to_pickle("./"+save_dir + file_name,protocol=4)
 
     def load(self, load_dir, file_name="./parameters.p"):
         # simple load function that allows loading of deprecated parameters object

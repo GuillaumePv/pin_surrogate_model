@@ -104,22 +104,19 @@ class Optimizer:
             g = grad.mean()[COL].values
 
             g = tf.convert_to_tensor(g)
-            loss_value = tf.convert_to_tensor(-mle[0][0])
+            loss_value = tf.convert_to_tensor(-mle)
 
-            #print('---',loss_value,flush=True)
+            print('---',loss_value,flush=True)
             return loss_value, g
 
-        # init_x =  self.means.values
-        init_x = df[COL].mean().values
+        # init_x = df[COL].mean().values
+        init_x = self.means.values
         
         s = time.time()
         soln = tfp.optimizer.lbfgs_minimize(value_and_gradients_function=func_g, initial_position=init_x, max_iterations=50, tolerance=1e-60)
         soln_time = np.round((time.time() - s) / 60, 2)
         pred_par = soln.position.numpy()
         obj_value = soln.objective_value.numpy()
-        PIN = (pred_par[0]*pred_par[4])/((pred_par[0]*pred_par[4])+pred_par[2]+pred_par[3])
-        print("PIN")
-        print(PIN)
         print(obj_value)
         print(pred_par)
 
