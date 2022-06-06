@@ -3,6 +3,7 @@
 # numpy for matrix algebra
 import numpy as np
 from numpy import log, exp
+import pandas as pd
 
 # log(sum(exp))
 from scipy.special import logsumexp
@@ -220,11 +221,7 @@ def simulation(numb_simu, write=True):
         f.write(f"{a},{d},{es},{eb},{mu},{buys.values[0]},{sells.values[0]},{MLE}\n")
         f.close()
 
-if __name__ == '__main__':
-    
-    import pandas as pd
-    from regressions import *
-    # number of simulation
+def create_dataset():
     if os.path.isfile("./data/PIN_MLE_new.txt") == False:
         print("=== creating simulation file ===")
         f = open("./data/PIN_MLE_new.txt", "a")
@@ -234,10 +231,35 @@ if __name__ == '__main__':
     sim = 1000
     max_iter = 10
     num_cores = multiprocessing.cpu_count()
-    start = time.time()
+    
     print(f"== number of CPU: {num_cores} ==")
 
     Parallel(n_jobs=num_cores)(delayed(simulation)(i,False) for i in tqdm(range(sim)))
-    end = time.time()
-    print(end-start)
+    
+
+def test_performance(num=1000, create_test_data=True):
+    df = pd.read_csv("./data/PIN_MLE_10.txt")
+    COL = ["alpha","delta","epsilon_b","epsilon_s","mu","buy","sell"]
+    df_num = df[COL].head(num)
+    data_perf = []
+    start_b = time.time()
+    for i in range(df_num.shape[0]):
+        v = df_num.iloc[i].values
+        #print(v)
+        array_MLE = _ll(v[0],v[1],v[2],v[3],v[4],pd.Series(v[5]),pd.Series(v[6]))
+        #print(array_MLE)
+        MLE = logsumexp(array_MLE,axis=0)[0]
+    end_b = time.time()
+    duration_b = end_b-start_b
+    data_perf.append(duration_b)
+    print(duration_b)
+
+
+    
+if __name__ == '__main__':
+    
+    test_performance()
+   
+    # number of simulation
+    
        

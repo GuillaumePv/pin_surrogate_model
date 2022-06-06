@@ -15,6 +15,7 @@ sim = 1000
 num_cores = multiprocessing.cpu_count()
 print(f"== number of CPU: {num_cores} ==")
 start = time.time()
-Parallel(n_jobs=num_cores)(delayed(simulation)(i,False) for i in tqdm(range(sim)))
+for i in tqdm(range(sim)):
+    simulation(i,False)
 end = time.time()
 print(end-start)

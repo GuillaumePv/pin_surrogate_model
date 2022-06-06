@@ -55,16 +55,14 @@ class Deepsurrogate:
         return X
         
 
-    # réussi à deboguer
-    def estimate_par_lbfgs(self,num=100):
+    def estimate_par_lbfgs(self,num=10):
         print(f"=== inverse modelling for {num} rows ===")
         COL = ["alpha","delta","epsilon_b","epsilon_s","mu"]
         COL_PLUS = COL + self.par_c.data.cross_vary_list
         tf_loss = tf.keras.losses.MSE
         data = self.X.iloc[:num,:]
         data_y = self.Y.head(num)
-        print("=== score of data ===")
-        print(self.c_model.score(data,data_y))
+
         init_x = data[COL].mean().values
 
         def func_g(x_params):
@@ -105,6 +103,18 @@ class Deepsurrogate:
         df_ei.to_csv("./results/table/ei_results.csv",index=False)
         print(df_ei)
         
+    def get_model_score(self):
+        print("=== score of the model ===")
+        score = self.c_model.score(self.X.head(1000),self.Y.head(1000))
+        score.to_latex("./results/table/result_model.tex",index=False)
+
+    def get_perf_speed_model(self,X=None):
+        X_1000 = self.X.head(1000)
+        start_m = time.time()
+        self.c_model.predict(X_1000)
+        end_m = time.time()
+        duration_m = end_m - start_m
+        print(duration_m)
 
     def get_pin(X):
         pass
@@ -152,7 +162,7 @@ class Deepsurrogate:
 
 if __name__ == '__main__':
     deepsurrogate = Deepsurrogate()
-    deepsurrogate.estimate_par_lbfgs()
+    deepsurrogate.get_perf_speed_model()
 
 
         

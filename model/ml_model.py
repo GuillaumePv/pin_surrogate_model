@@ -191,12 +191,10 @@ class NetworkModel:
         self.history_training = pd.DataFrame(self.history_training.history)
         self.save()
 
-    # good
     def predict(self, X):
         X, y = self.normalize(X, y=None)
         X = self.split_state_data_par(X)
-        X = pd.concat(X,axis=1)
-        pred = self.model.predict(X.values)
+        pred = self.model.predict(X)
         return pred
 
     # good
