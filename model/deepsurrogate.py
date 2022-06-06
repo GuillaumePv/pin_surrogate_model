@@ -113,51 +113,6 @@ class DeepSurrogate:
         PIN = np.round((pred_par[0]*pred_par[4])/((pred_par[0]*pred_par[4])+pred_par[2]+pred_par[3]),4)
         return PIN
     
-    # my innovation
-    def pin_estimation(self,X=None):
-        COL = ["alpha","delta","epsilon_b","epsilon_s","mu"]
-        COL_PLUS = COL + self.par_c.data.cross_vary_list
-        init_x = self.means.values
-
-        data = self.X.iloc[:100,:]
-        df = data.iloc[:,:-1]
-       
-        def func_g(x_params):
-            # génial pour faire sur plusieurs colonnes la même valeur
-            df[COL] = x_params.numpy()
-            # print("=== df ===")
-            # print(df)
-            grad, mle = self.c_model.get_grad_and_mle(df[COL_PLUS],True)
-            # add possibilities to use it on several period
-            # bug here
-            loss_value = np.abs(np.sum(mle))
-            g = grad.mean()[COL].values
-
-            g = tf.convert_to_tensor(g)
-            
-            loss_value = tf.convert_to_tensor(loss_value)
-
-            #print('---',loss_value,flush=True)
-            return loss_value
-
-       
-
-        s = time.time()
-        for i in tqdm(range(data.shape[0])):
-            df = data.loc[i].to_frame().transpose()
-            y = data["MLE"].loc[i]
-            soln = tfp.optimizer.nelder_mead_minimize(objective_function=func_g, initial_vertex=init_x, max_iterations=50)
-            soln_time = np.round((time.time() - s) / 60, 2)
-            pred_par = soln.position.numpy()
-            obj_value = soln.objective_value.numpy()
-       
-            # print(obj_value)
-            # print(pred_par)
-            # create a table with PIN, buys and sells
-            PIN = np.round((pred_par[0]*pred_par[4])/((pred_par[0]*pred_par[4])+pred_par[2]+pred_par[3]),4)
-            # print("=== Deep PIN value ===")
-            # print(PIN)
-
 if __name__ == '__main__':
     deepsurrogate = DeepSurrogate()
     deepsurrogate.pin_estimation()
