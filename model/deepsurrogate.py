@@ -53,8 +53,32 @@ class Deepsurrogate:
             assert False, 'wrong number of columns'
         
         return X
-        
+    
+    # obtain gradients for each parameters
+    def get_derivative(self, X):
+        X = self.pre_process_X(X)
+        return self.c_model.get_grad_and_mle(X)
 
+    def get_model_score(self):
+        print("=== score of the model ===")
+        score = self.c_model.score(self.X.head(1000),self.Y.head(1000))
+        score.to_latex("./results/table/result_model.tex",index=False)
+
+    def get_perf_speed_model(self,X=None,save_file=False):
+        X_1000 = self.X.head(1000)
+        start_m = time.time()
+        self.c_model.predict(X_1000)
+        end_m = time.time()
+        duration_m = end_m - start_m
+        print(duration_m)
+        if save_file:
+            pd.DataFrame(self.c_model.predict(X_1000)).to_csv("./results/table/model_pred_1000.csv",index=False)
+
+    def get_pin(X):
+        pass
+    
+    ## see to move this part in another file => using of deep surrogate
+    # try to see if it works with mean value
     def estimate_par_lbfgs(self,num=10):
         print(f"=== inverse modelling for {num} rows ===")
         COL = ["alpha","delta","epsilon_b","epsilon_s","mu"]
@@ -63,13 +87,13 @@ class Deepsurrogate:
         data = self.X.iloc[:num,:]
         data_y = self.Y.head(num)
 
+        # Each time, we initialize optimizer with the mean value of each parameter
+        # see to change with the mean saved
         init_x = data[COL].mean().values
 
         def func_g(x_params):
             # génial pour faire sur plusieurs colonnes la même valeur
             df[COL] = x_params.numpy()
-            # print("=== df ===")
-            # print(df)
             grad, mle = self.c_model.get_grad_and_mle(df[COL_PLUS],True)
 
             loss_value = np.mean(np.square(mle-y)**2)
@@ -82,9 +106,9 @@ class Deepsurrogate:
             return loss_value, g
         s = time.time()
         list_of_ei = []
+        # try to do it by matrix
         for i in tqdm(range(data.shape[0])):
             df = data.loc[i].to_frame().transpose()
-            #init_x = df[COL].values[0]+0.001
             y = data["MLE"].loc[i]
             
             soln = tfp.optimizer.lbfgs_minimize(value_and_gradients_function=func_g, initial_position=init_x, max_iterations=50, tolerance=1e-60)
@@ -103,67 +127,55 @@ class Deepsurrogate:
         df_ei.to_csv("./results/table/ei_results.csv",index=False)
         print(df_ei)
         
-    def get_model_score(self):
-        print("=== score of the model ===")
-        score = self.c_model.score(self.X.head(1000),self.Y.head(1000))
-        score.to_latex("./results/table/result_model.tex",index=False)
-
-    def get_perf_speed_model(self,X=None):
-        X_1000 = self.X.head(1000)
-        start_m = time.time()
-        self.c_model.predict(X_1000)
-        end_m = time.time()
-        duration_m = end_m - start_m
-        print(duration_m)
-        pd.DataFrame(self.c_model.predict(X_1000)).to_csv("./results/table/model_pred_1000.csv",index=False)
-
-    def get_pin(X):
-        pass
     # my innovation
-    def pin_estimation(self):
+    def pin_estimation(self,X=None):
         COL = ["alpha","delta","epsilon_b","epsilon_s","mu"]
         COL_PLUS = COL + self.par_c.data.cross_vary_list
-        
-        bound_cost = tf.constant(100.0, dtype=tf.float64)
+        init_x = self.means.values
 
+        data = self.X.iloc[:20,:]
         test = self.X.iloc[:1,:]
-        df = test.iloc[:,:-1]
+        df = data.iloc[:,:-1]
         y = test.iloc[:,-1:]
-        print(df)
-        print(y)
         def func_g(x_params):
             # génial pour faire sur plusieurs colonnes la même valeur
             df[COL] = x_params.numpy()
             # print("=== df ===")
             # print(df)
             grad, mle = self.c_model.get_grad_and_mle(df[COL_PLUS],True)
-            loss_value = tf.reduce_sum(-mle)
+            # add possibilities to use it on several period
+            # bug here
+            loss_value = np.abs(np.sum(mle))
             g = grad.mean()[COL].values
 
             g = tf.convert_to_tensor(g)
             
             loss_value = tf.convert_to_tensor(loss_value)
 
-            print('---',loss_value,flush=True)
-            return loss_value, g
+            #print('---',loss_value,flush=True)
+            return loss_value
 
-        init_x = self.means.values
-        bounds = tf.fill((1, len(init_x)), self.pivot)
-        
-        
+       
+
         s = time.time()
-        soln = tfp.optimizer.lbfgs_minimize(value_and_gradients_function=func_g, initial_position=init_x, max_iterations=50, tolerance=1e-60)
-        soln_time = np.round((time.time() - s) / 60, 2)
-        pred_par = soln.position.numpy()
-        obj_value = soln.objective_value.numpy()
-        print(y)
-        print(obj_value)
-        print(init_x)
-        print(pred_par)
+        for i in tqdm(range(data.shape[0])):
+            df = data.loc[i].to_frame().transpose()
+            y = data["MLE"].loc[i]
+            soln = tfp.optimizer.nelder_mead_minimize(objective_function=func_g, initial_vertex=init_x, max_iterations=50)
+            soln_time = np.round((time.time() - s) / 60, 2)
+            pred_par = soln.position.numpy()
+            obj_value = soln.objective_value.numpy()
+       
+            print(obj_value)
+            print(pred_par)
+            # create a table with PIN, buys and sells
+            PIN = np.round((pred_par[0]*pred_par[4])/((pred_par[0]*pred_par[4])+pred_par[2]+pred_par[3]),4)
+            print("=== Deep PIN value ===")
+            print(PIN)
 
 if __name__ == '__main__':
     deepsurrogate = Deepsurrogate()
-    deepsurrogate.get_perf_speed_model()
+    deepsurrogate.pin_estimation()
 
 
         
