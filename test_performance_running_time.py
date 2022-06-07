@@ -7,7 +7,6 @@ from matplotlib import style
 style.use('fivethirtyeight')
 
 deepsurrogate = DeepSurrogate()
-
 nums = [10,100,1000]
 df = deepsurrogate.X
 COL = ["alpha","delta","epsilon_b","epsilon_s","mu","buy","sell"]
@@ -16,9 +15,15 @@ data_perf = {
     "PIN likelihood":[],
     'Surrogate likelihood':[]
 }
+load_model = True
 for n in nums:
     print(f"=== number of simulations: {n} ===")
+    
     df_num = df[COL].head(n)
+    ## see to improve that
+    if load_model:
+        deepsurrogate.c_model.predict(df_num)
+        load_model = False
     start_m = time.time()
     deepsurrogate.c_model.predict(df_num)
     end_m = time.time()
@@ -37,7 +42,7 @@ for n in nums:
 
 
 df_result = pd.DataFrame(data_perf,index=nums)
-df_result.to_latex("./results/table/speed_perf_comparison.tex")
+
 df_result.plot()
 plt.title(r"PIN vs Surrogate (Running time)")
 plt.ylabel(r"Time taken in sec")
@@ -46,3 +51,13 @@ plt.tight_layout()
 plt.savefig("./results/graphs/speed_perf_comparison.png")
 plt.close()
 
+df_result["xTimes"] = df_result['PIN likelihood'] / df_result['Surrogate likelihood']
+df_result["xTimes"].plot()
+plt.title(r"PIN / Surrogate (Running time)")
+plt.ylabel(r"x Times")
+plt.xlabel(r"Number of simulations")
+plt.tight_layout()
+plt.savefig("./results/graphs/speed_perf_comparison_xtimes.png")
+plt.close()
+
+df_result.to_latex("./results/table/speed_perf_comparison.tex")
