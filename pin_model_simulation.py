@@ -228,7 +228,7 @@ def simulation(numb_simu = 1000, write=True):
 
     
 if __name__ == '__main__':
-    
+
     simulation()
    
     # number of simulation

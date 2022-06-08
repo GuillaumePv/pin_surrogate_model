@@ -35,6 +35,8 @@ class DeepSurrogate:
             data_dir = self.par_c.data.path_sim_save + 'PIN_MLE_new.txt'
         else:
             data_dir = self.par_c.data.path_sim_save + 'APIN_MLE.txt'
+
+        # TO-DO: see to not load each time
         self.X = pd.read_csv(data_dir)
         self.Y = self.X['MLE']
 
@@ -72,7 +74,7 @@ class DeepSurrogate:
         score = self.c_model.score(self.X.head(1000),self.Y.head(1000))
         score.to_latex("./results/table/result_model.tex",index=False)
 
-
+    @tf.autograph.experimental.do_not_convert
     def get_pin(self,X):
         COL = ["alpha","delta","epsilon_b","epsilon_s","mu"]
         COL_B_S = self.par_c.data.cross_vary_list
