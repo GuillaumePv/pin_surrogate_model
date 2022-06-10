@@ -169,20 +169,9 @@ class NetworkModel:
        
         y_data = data[y]
         x_data = data[c + opt_data]
-        x_data_c = data[c]
-        x_data_opt_data = data[opt_data]
-
         
         x_data, y_none = self.normalize(x_data)
         final_data = self.split_state_data_par(x_data)
-
-   
-
-        #print(x_data.iloc[:,:-2],x_data.iloc[:,-2:])
-        # ###################
-        # ## A CHECCK !!!! ##
-        # ###################
-
         #Create a callback that saves the model's weights
         log_dir = "./model/logs/fit/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
         tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
@@ -201,7 +190,6 @@ class NetworkModel:
         pred = self.model.predict(X)
         return pred
 
-    # good
     def score(self,X,y):
         X, y = self.normalize(X, y)
         X = self.split_state_data_par(X)
@@ -215,9 +203,6 @@ class NetworkModel:
         """
         function that generate gradient and MLE
         """
-        ## need to debug for my project
-        # extract pin input
-
         X, y = self.normalize(X, y=None)
         X = self.split_state_data_par(X)
 
@@ -334,13 +319,6 @@ class NetworkModel:
         
 
 if __name__ == "__main__":
-    # df = pd.read_csv("./data/data_from_VM/PIN_MLE.txt",encoding='utf-8',error_bad_lines=False)
-    # print(df.shape)
-    # print(df.isna().sum())
-    # df = df.dropna()
-    # print(df.info())
-    # df = df.astype(np.float64)
-    # print(df.info())
     par = Params()
     model = NetworkModel(par)
     model.train()

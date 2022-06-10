@@ -16,7 +16,7 @@ link of the pypl library: https://test.pypi.org/project/DeepSurrogate-pin/
 
 ## Supervisors
 
-- Simon Scheidegger (simon.scheidegger@unil.ch)
+- Simon Scheidegger (Department of Economics, HEC Lausanne, simon.scheidegger@unil.ch)
 - Antoine Didisheim (Swiss Finance Institute, antoine.didisheim@unil.ch)
 
 ## Deep surrogate (architecture)
