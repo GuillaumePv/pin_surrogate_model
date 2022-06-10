@@ -1,10 +1,6 @@
 # Master thesis: Deep Structural estimation With an Application to a likelihood fnction (PIN model)
 
-This package proposes an easy application of the master thesis: "Deep Structural estimation With an Application to PIN estimation"
-
-## Abstract
-
-Create surrogate model for the likelihood function of the PIN model
+This package proposes an easy application of the master thesis: "Deep Structural estimation: with an application to market microstructure modelling"
 
 ## Installation
 
@@ -23,13 +19,14 @@ link of the pypl library: https://test.pypi.org/project/DeepSurrogate-pin/
 
 ## Model
 
-
-self.layers = [400,200,100] 0.93 R2
-
-self.layers = [400,200,100,50] # 0.9416 R2
-
-[400,400,200,100] => 0.9898 R2
-
+| Hyparameter | Value 
+| ------------- | -------------  
+| architecture  | [400,400,200,100]
+| activation function  | Swish
+| optimizer  | ADAM
+| loss function | MSE
+| learning rate  | 0.5e-3
+| # of epoch | 15
 
 ## Instruction
 
@@ -77,22 +74,15 @@ The surroate can not estimate PIN probability with parameters outside of this ra
 
 | Parameter | Min | Max
 | ------------- | ------------- | ------------- 
-| alpha  | 0  | 1
-| delta  | 0  | 1
-| u  | 0  | 200
-| epsilon buys  | 0  | 300
-| epsilon sells  | 0  | 300
-| Number of buys  | 0  | 300
-| Number of sells  | 0  | 300
+| a  | 0  | 0.99
+| &delta;  | 0  | 0.99
+| &mu;  | 100  | 300
+| &epsilon; buys  | 100  | 300
+| &epsilon; sells  | 100  | 300
+| # of buy trades  | 55  | 700
+| # of sell trades  | 55  | 700
 
-# create pypl library (commands)
+## Demo 
 
-- create build of my library
-python -m build
-- test pypi for my library
-1st time
-twine upload -r testpypi dist/*
-
-2nd time
-- change version on the setup.py file
-twine upload -r testpypi --skip-existing dist/*
+- To see demo of inverse modelling: see estimate_par_lbfgs.py
+- to see how to determine the PIN value: demo.ipynb
