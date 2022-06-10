@@ -1,4 +1,4 @@
-# Master thesis: Deep Structural estimation With an Application to a likelihood fnction (PIN model)
+# Master thesis: Deep Structural estimation: with an application to market microstructure modelling
 
 This package proposes an easy application of the master thesis: "Deep Structural estimation: with an application to market microstructure modelling"
 
