@@ -1,12 +1,16 @@
 from model.deepsurrogate import DeepSurrogate
 import pandas as pd
 import tensorflow as tf
+import os
 import tensorflow_probability as tfp
 import numpy as np
 import time
 from tqdm import tqdm
 deepsurrogate = DeepSurrogate()
 
+path = "./results/table/"+deepsurrogate.par_c.name
+if os.path.exists(path) == False:
+        os.makedirs(path)
 num = 1000
 print(f"=== inverse modelling for {num} rows ===")
 COL = ["alpha","delta","epsilon_b","epsilon_s","mu"]
@@ -35,7 +39,7 @@ def func_g(x_params):
 
 s = time.time()
 list_of_ei = []
-# try to do it by matrix
+
 for i in tqdm(range(data.shape[0])):
     df = data.loc[i].to_frame().transpose()
     y = data["MLE"].loc[i]
@@ -54,4 +58,4 @@ soln_time = np.round((time.time() - s) / 60, 2)
 print(soln_time)
 df_ei = pd.DataFrame(list_of_ei)
 print("=== Saving results ===")
-df_ei.to_csv("./results/table/ei_results.csv",index=False)
+df_ei.to_csv(path+"/ei_results.csv",index=False)
