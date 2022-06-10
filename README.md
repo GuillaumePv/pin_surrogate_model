@@ -2,6 +2,8 @@
 
 This package proposes an easy application of the master thesis: "Deep Structural estimation: with an application to market microstructure modelling"
 
+![alt text](https://github.com/GuillaumePv/pin_surrogate_model/blob/main/results/graphs/3d_comparison_model_surrogate.png)
+
 ## Installation
 
 pip install -i https://test.pypi.org/simple/ DeepSurrogate-pin
