@@ -17,7 +17,7 @@ link of the pypl library: https://test.pypi.org/project/DeepSurrogate-pin/
 - Simon Scheidegger (simon.scheidegger@unil.ch)
 - Antoine Didisheim (Swiss Finance Institute, antoine.didisheim@unil.ch)
 
-## Model
+## Deep surrogate (architecture)
 
 | Hyparameter | Value 
 | ------------- | -------------  
@@ -77,8 +77,8 @@ The surroate can not estimate PIN probability with parameters outside of this ra
 | a  | 0  | 0.99
 | &delta;  | 0  | 0.99
 | &mu;  | 100  | 300
-| &epsilon; buys  | 100  | 300
-| &epsilon; sells  | 100  | 300
+| &epsilon;_buy  | 100  | 300
+| &epsilon;_sell  | 100  | 300
 | # of buy trades  | 55  | 700
 | # of sell trades  | 55  | 700
 
