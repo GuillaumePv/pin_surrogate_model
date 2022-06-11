@@ -44,7 +44,7 @@ for n in nums:
 df_result = pd.DataFrame(data_perf,index=nums)
 
 df_result.plot()
-plt.title(r"PIN vs Surrogate (Running time)")
+#plt.title(r"PIN vs Surrogate (Running time)")
 plt.ylabel(r"Time taken in sec")
 plt.xlabel(r"Number of simulations")
 plt.grid(True)
@@ -54,7 +54,7 @@ plt.close()
 
 df_result["xTimes"] = df_result['PIN likelihood'] / df_result['Surrogate likelihood']
 df_result["xTimes"].plot()
-plt.title(r"PIN / Surrogate (Running time)")
+#plt.title(r"PIN / Surrogate (Running time)")
 plt.ylabel(r"x Times")
 plt.xlabel(r"Number of simulations")
 plt.grid(True)
