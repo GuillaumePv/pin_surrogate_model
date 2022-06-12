@@ -95,11 +95,11 @@ for name in tqdm(dataset):
 
     fig,ax = plt.subplots(figsize=(10,5))
     l1, = ax.plot(graph_merge.index,graph_merge["Bid Close"],label="Bid")
-    ax.set_ylabel(r"Price (Bid & Ask)")
+    ax.set_ylabel(r"Price (Bid & Ask)",fontsize=10)
     l2 = ax.plot(graph_merge.index,graph_merge["Ask Close"],label="Ask")
     ax2 = ax.twinx()
     l3, = ax2.plot(graph_merge.index, graph_merge.PIN,color="orange",label="PIN")
-    ax2.set_ylabel(r"PIN value")
+    ax2.set_ylabel(r"PIN value",fontsize=10)
     ax.legend(bbox_to_anchor=(0,1.02,1,0.2), loc="lower left",
                     mode="expand", borderaxespad=0, ncol=2)
     ax2.legend(bbox_to_anchor=(0,1.02,1,0.2), loc="center",
@@ -113,10 +113,10 @@ for name in tqdm(dataset):
     # %%
     fig,ax = plt.subplots(figsize=(10,5))
     l1, = ax.plot(graph_merge.index,graph_merge.midpoint)
-    ax.set_ylabel(r"Close price")
+    ax.set_ylabel(r"Close price",fontsize=10)
     ax2 = ax.twinx()
     l2, = ax2.plot(graph_merge.index, graph_merge.PIN,color="orange")
-    ax2.set_ylabel(r"PIN value")
+    ax2.set_ylabel(r"PIN value",fontsize=10)
 
     plt.legend([l1, l2],["Close price", "PIN"])
     plt.xlabel(r"Date")
@@ -128,10 +128,10 @@ for name in tqdm(dataset):
     # %%
     fig,ax = plt.subplots(figsize=(8,5))
     l1, = ax.plot(graph_merge.index,graph_merge["bid-ask spread"])
-    ax.set_ylabel(r"bid-ask spread")
+    ax.set_ylabel(r"bid-ask spread",fontsize=10)
     ax2 = ax.twinx()
     l2, = ax2.plot(graph_merge.index, graph_merge.PIN,color="orange")
-    ax2.set_ylabel(r"PIN value")
+    ax2.set_ylabel(r"PIN value",fontsize=10)
 
     plt.legend([l1, l2],["bid-ask spread", "PIN"])
     plt.xlabel(r"Date")
@@ -144,10 +144,10 @@ for name in tqdm(dataset):
     # problem here
     fig,ax = plt.subplots(figsize=(8,3))
     l1, = ax.plot(graph_merge.index,graph_merge["buy-sell difference"])
-    ax.set_ylabel(r"buy-sell absolute difference")
+    ax.set_ylabel(r"buy-sell absolute difference",fontsize=10)
     ax2 = ax.twinx()
     l2, = ax2.plot(graph_merge.index, graph_merge.PIN,color="orange")
-    ax2.set_ylabel(r"PIN value")
+    ax2.set_ylabel(r"PIN value",fontsize=10)
 
     plt.legend([l1, l2],["buy-sell difference", "PIN"])
     plt.xlabel(r"Date")
