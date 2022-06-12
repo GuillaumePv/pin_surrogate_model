@@ -85,7 +85,7 @@ for name in tqdm(dataset):
     #buy_and_sell[["buy","sell"]].plot()
 
     # %%
-    close_price = final_merged[['Timestamp','midpoint','bid-ask spread']]
+    close_price = final_merged[['Timestamp','midpoint','bid-ask spread','Bid Close','Ask Close']]
     close_price.index = close_price['Timestamp']
     close_price = close_price.iloc[:,1:]
     close_price = close_price.resample('D').mean()
@@ -93,6 +93,23 @@ for name in tqdm(dataset):
     graph_merge = pd.merge(close_price,buy_and_sell,left_index=True,right_index=True)
     graph_merge["buy-sell difference"] = np.abs(graph_merge['buy'] - graph_merge["sell"])
 
+    fig,ax = plt.subplots(figsize=(10,5))
+    l1, = ax.plot(graph_merge.index,graph_merge["Bid Close"],label="Bid")
+    ax.set_ylabel(r"Price (Bid & Ask)")
+    l2 = ax.plot(graph_merge.index,graph_merge["Ask Close"],label="Ask")
+    ax2 = ax.twinx()
+    l3, = ax2.plot(graph_merge.index, graph_merge.PIN,color="orange",label="PIN")
+    ax2.set_ylabel(r"PIN value")
+    ax.legend(bbox_to_anchor=(0,1.02,1,0.2), loc="lower left",
+                    mode="expand", borderaxespad=0, ncol=2)
+    ax2.legend(bbox_to_anchor=(0,1.02,1,0.2), loc="center",
+                    mode="expand", borderaxespad=0, ncol=1)
+    plt.xlabel(r"Date")
+    plt.tight_layout()
+
+    plt.grid(False)
+    plt.savefig(folder_results+"/bid_ask_pin_evo.png")
+    plt.close()
     # %%
     fig,ax = plt.subplots(figsize=(10,5))
     l1, = ax.plot(graph_merge.index,graph_merge.midpoint)
