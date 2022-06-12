@@ -70,13 +70,13 @@ class ParamsProcess:
 
 class ParamsPin(ParamsProcess):
     def __init__(self):
-        self.alpha = [0.0, 1.0]
-        self.delta = [0.0, 1.0]
-        self.epsilon_b = [200, 300]
-        self.epsilon_s = [200, 300]
-        self.mu = [200, 300]
-        self.buy = [200, 600]
-        self.sell = [200, 600]
+        self.alpha = [0.0, 0.99]
+        self.delta = [0.0, 0.99]
+        self.epsilon_b = [100, 300]
+        self.epsilon_s = [100, 300]
+        self.mu = [100, 300]
+        self.buy = [55, 700]
+        self.sell = [55, 700]
 
 class ParamsApin(ParamsProcess):
     def __init__(self) -> None:
@@ -99,7 +99,7 @@ class ParamsModels:
         # 8 layer: 0.8035
         # 7 layer: 0.78
         # 6 layer: 0.81 (VM)
-        self.layers = [400,400,400,400,400,400,400] # 6 hidden layer
+        self.layers = [400,400,200,100] # 6 hidden layer
         #self.layers = [400,400,200,100] # 0.98
         self.batch_size = 256
         self.activation = "swish"
@@ -108,7 +108,7 @@ class ParamsModels:
 
         self.learning_rate = 0.5e-3
 
-        self.E = 50
+        self.E = 15
 
 class ParamsData:
     def __init__(self):

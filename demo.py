@@ -6,17 +6,20 @@ import matplotlib.pyplot as plt
 from matplotlib import style
 style.use('fivethirtyeight')
 
+import seaborn as sns
 from model.deepsurrogate import DeepSurrogate
 from tqdm import tqdm
 deepsurrogate = DeepSurrogate()
 
 columns_pin = ["buy","sell"]
 
-#buy_and_sell = buy_and_sell.head(50)
-
-
-
 # %%
+
+if os.path.isfile("./results/PIN_real.txt") == False:
+    print("=== creating real file ===")
+    f = open("./results/PIN_real.txt", "a")
+    f.write("PIN\n")
+    f.close()
 dataset = ["parro","vetropak","vontonbel","sig","vaudoise","bcv"]
 for name in tqdm(dataset):
     print(f"=== algo for {name} ===")
@@ -77,6 +80,9 @@ for name in tqdm(dataset):
     PIN_values = []
     for i in tqdm(range(buy_and_sell.shape[0])):
         pin = deepsurrogate.get_pin(buy_and_sell.iloc[i].values)
+        f = open("./results/PIN_real.txt", "a")
+        f.write(f"{pin}\n")
+        f.close()
         #print(pin)
         PIN_values.append(pin)
 
@@ -152,6 +158,25 @@ for name in tqdm(dataset):
     plt.grid(False)
     plt.savefig(folder_results+f"/{name}_buy_sell_diff_pin.png")
     plt.close()
+
+    sns.histplot(graph_merge["PIN"],kde=True)
+    plt.tight_layout()
+    plt.savefig(folder_results+f"/{name}_dist_pin.png")
+    plt.close()
+
+    plt.boxplot(graph_merge["PIN"])
+    plt.xticks([1], [name])
+    plt.ylabel(r"PIN value",fontsize=12)
+    plt.tight_layout()
+    plt.savefig(folder_results+f"/{name}_boxplot_pin.png")
+    plt.close()
+
+    graph_merge["PIN"].describe().to_latex(folder_results+f"/{name}_pin_stat_desc.tex")
+
+### analyse of the total results ###
+
+df = pd.read_csv("./results/PIN_real.txt")
+df.describe().to_latex("./results/table/stat_descrip_PIN_real.tex")
 
 
 

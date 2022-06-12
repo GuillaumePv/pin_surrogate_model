@@ -6,11 +6,17 @@ import tensorflow_probability as tfp
 import numpy as np
 import time
 from tqdm import tqdm
+import matplotlib.pyplot as plt
+
 deepsurrogate = DeepSurrogate()
 
 path = "./results/table/"+deepsurrogate.par_c.name
+path_graph = "./results/graphs/"+deepsurrogate.par_c.name
 if os.path.exists(path) == False:
         os.makedirs(path)
+
+if os.path.exists(path_graph) == False:
+        os.makedirs(path_graph)
 num = 1000
 print(f"=== inverse modelling for {num} rows ===")
 COL = ["alpha","delta","epsilon_b","epsilon_s","mu"]
@@ -59,3 +65,24 @@ print(soln_time)
 df_ei = pd.DataFrame(list_of_ei)
 print("=== Saving results ===")
 df_ei.to_csv(path+"/ei_results.csv",index=False)
+
+df_ei.boxplot()
+plt.xticks([1, 2, 3,4,5], [r'$a$', r'$\delta$', r'$\mu$', r'$\epsilon_b$', r'$\epsilon_s$'])
+#plt.title(r"Boxplot of $e_i$ by parameters")
+plt.ylabel(r"$e_i$")
+plt.xlabel(r"$x_i^*$")
+plt.tight_layout()
+plt.savefig(path_graph + f"/boxplot_ei_{deepsurrogate.par_c.name}.png")
+plt.close()
+
+df_ei_q = df_ei[df_ei <= df_ei.quantile(0.75)]
+df_ei_q = df_ei_q.dropna()
+
+df_ei_q.boxplot()
+plt.xticks([1, 2, 3,4,5], [r'$a$', r'$\delta$', r'$\mu$', r'$\epsilon_b$', r'$\epsilon_s$'])
+plt.ylabel(r"$e_i$")
+plt.xlabel(r"$x_i^*$")
+#plt.title(r"Boxplot of $e_i$ by parameters")
+plt.tight_layout()
+plt.savefig(path_graph + f"/boxplot_ei_q3_{deepsurrogate.par_c.name}.png")
+plt.close()

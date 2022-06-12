@@ -184,7 +184,11 @@ def compute_pin(res):
 
 def simulation(numb_simu = 1000, write=True):
     ## Daily simulation ##
-    
+    if os.path.isfile("./data/PIN_MLE_new.txt") == False:
+        print("=== creating simulation file ===")
+        f = open("./data/PIN_MLE_new.txt", "a")
+        f.write("alpha,delta,epsilon_b,epsilon_s,mu,buy,sell,MLE\n")
+        f.close()
     ## Hidden factor ##
 
     a = np.random.uniform(0,0.99,1)[0] # [0,1]
@@ -209,13 +213,6 @@ def simulation(numb_simu = 1000, write=True):
     if write:
         f = open("./data/PIN_MLE_new.txt", "a")
         f.write(f"{a},{d},{es},{eb},{mu},{buys.values[0]},{sells.values[0]},{MLE}\n")
-        f.close()
-
-
-    if os.path.isfile("./data/PIN_MLE_new.txt") == False:
-        print("=== creating simulation file ===")
-        f = open("./data/PIN_MLE_new.txt", "a")
-        f.write("alpha,delta,epsilon_b,epsilon_s,mu,buy,sell,MLE\n")
         f.close()
 
     num_cores = multiprocessing.cpu_count()
