@@ -165,7 +165,7 @@ for name in tqdm(dataset):
     plt.close()
 
     plt.boxplot(graph_merge["PIN"])
-    plt.xticks([1], [name])
+    plt.xticks([1], [""])
     plt.ylabel(r"PIN value",fontsize=12)
     plt.tight_layout()
     plt.savefig(folder_results+f"/{name}_boxplot_pin.png")
