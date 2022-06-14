@@ -70,6 +70,7 @@ class DeepSurrogate:
         print("=== score of the model ===")
         score = self.c_model.score(self.X.head(100000),self.Y.head(100000))
         print("=== compute score ====")
+        print(score)
         score.to_latex("./results/table/result_model.tex",index=False)
 
     @tf.autograph.experimental.do_not_convert
