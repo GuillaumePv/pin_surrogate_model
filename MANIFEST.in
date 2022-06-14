@@ -1,0 +1,2 @@
+include README.md
+include ./model_save/Layer_400_400_200_100_swish_Lr0_0005_ADAMoMSE_BATCH_256tr_size_3CM/*.p
