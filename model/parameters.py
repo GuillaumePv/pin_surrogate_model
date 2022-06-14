@@ -99,8 +99,8 @@ class ParamsModels:
         # 8 layer: 0.8035
         # 7 layer: 0.78
         # 6 layer: 0.81 (VM)
-        self.layers = [400,400,400,400,400,400,400] # 6 hidden layer
-        #self.layers = [400,400,200,100] # 0.98
+        #self.layers = [400] # 6 hidden layer
+        self.layers = [400,400,400,400,400,400,400] # 0.98
         self.batch_size = 256
         self.activation = "swish"
         self.opti = Optimizer.ADAM # use this
@@ -108,7 +108,7 @@ class ParamsModels:
 
         self.learning_rate = 0.5e-3
 
-        self.E = 50
+        self.E = 15
 
 class ParamsData:
     def __init__(self):
