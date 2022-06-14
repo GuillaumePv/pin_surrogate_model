@@ -6,20 +6,23 @@ import matplotlib.pyplot as plt
 from matplotlib import style
 style.use('fivethirtyeight')
 
+import seaborn as sns
 from model.deepsurrogate import DeepSurrogate
 from tqdm import tqdm
 deepsurrogate = DeepSurrogate()
 
 columns_pin = ["buy","sell"]
 
-#buy_and_sell = buy_and_sell.head(50)
-
-
-
 # %%
+
+if os.path.isfile("./results/PIN_real.txt") == False:
+    print("=== creating real file ===")
+    f = open("./results/PIN_real.txt", "a")
+    f.write("PIN\n")
+    f.close()
 dataset = ["parro","vetropak","vontonbel","sig","vaudoise","bcv"]
 for name in tqdm(dataset):
-
+    print(f"=== algo for {name} ===")
     path = f"./data/data_{name}.xlsx"
     folder_results = './results/'+name
     if os.path.exists(folder_results) == False:
@@ -77,11 +80,13 @@ for name in tqdm(dataset):
     PIN_values = []
     for i in tqdm(range(buy_and_sell.shape[0])):
         pin = deepsurrogate.get_pin(buy_and_sell.iloc[i].values)
+        f = open("./results/PIN_real.txt", "a")
+        f.write(f"{pin}\n")
+        f.close()
         #print(pin)
         PIN_values.append(pin)
 
     buy_and_sell['PIN'] = PIN_values
-    buy_and_sell.to_csv("test_results.csv")
     #buy_and_sell[["buy","sell"]].plot()
 
     # %%
@@ -95,68 +100,84 @@ for name in tqdm(dataset):
 
     fig,ax = plt.subplots(figsize=(10,5))
     l1, = ax.plot(graph_merge.index,graph_merge["Bid Close"],label="Bid")
-    ax.set_ylabel(r"Price (Bid & Ask)")
+    ax.set_ylabel(r"Price (Bid & Ask)",fontsize=12)
     l2 = ax.plot(graph_merge.index,graph_merge["Ask Close"],label="Ask")
     ax2 = ax.twinx()
     l3, = ax2.plot(graph_merge.index, graph_merge.PIN,color="orange",label="PIN")
-    ax2.set_ylabel(r"PIN value")
-    ax.legend(bbox_to_anchor=(0,1.02,1,0.2), loc="lower left",
-                    mode="expand", borderaxespad=0, ncol=2)
-    ax2.legend(bbox_to_anchor=(0,1.02,1,0.2), loc="center",
-                    mode="expand", borderaxespad=0, ncol=1)
+    ax2.set_ylabel(r"PIN value",fontsize=12)
+    ax.legend(loc="lower left")
+    ax2.legend(loc="upper left")
     plt.xlabel(r"Date")
     plt.tight_layout()
 
     plt.grid(False)
-    plt.savefig(folder_results+"/bid_ask_pin_evo.png")
+    plt.savefig(folder_results+f"/{name}_bid_ask_pin_evo.png")
     plt.close()
     # %%
     fig,ax = plt.subplots(figsize=(10,5))
     l1, = ax.plot(graph_merge.index,graph_merge.midpoint)
-    ax.set_ylabel(r"Close price")
+    ax.set_ylabel(r"Close price",fontsize=12)
     ax2 = ax.twinx()
     l2, = ax2.plot(graph_merge.index, graph_merge.PIN,color="orange")
-    ax2.set_ylabel(r"PIN value")
+    ax2.set_ylabel(r"PIN value",fontsize=12)
 
-    plt.legend([l1, l2],["Close price", "PIN"])
+    plt.legend([l1, l2],["Close price", "PIN"],bbox_to_anchor=(0.6, -0.1))
     plt.xlabel(r"Date")
     plt.tight_layout()
     plt.grid(False)
-    plt.savefig(folder_results+"/close_price_pin.png")
+    plt.savefig(folder_results+f"/{name}_close_price_pin.png")
     plt.close()
 
     # %%
-    fig,ax = plt.subplots(figsize=(8,5))
+    fig,ax = plt.subplots(figsize=(10,5))
     l1, = ax.plot(graph_merge.index,graph_merge["bid-ask spread"])
-    ax.set_ylabel(r"bid-ask spread")
+    ax.set_ylabel(r"bid-ask spread",fontsize=12)
     ax2 = ax.twinx()
     l2, = ax2.plot(graph_merge.index, graph_merge.PIN,color="orange")
-    ax2.set_ylabel(r"PIN value")
+    ax2.set_ylabel(r"PIN value",fontsize=12)
 
-    plt.legend([l1, l2],["bid-ask spread", "PIN"])
+    plt.legend([l1, l2],["bid-ask spread", "PIN"],bbox_to_anchor=(0.6, -0.1))
     plt.xlabel(r"Date")
     plt.grid(False)
     plt.tight_layout()
-    plt.savefig(folder_results+"/bid_ask_spread_pin.png")
+    plt.savefig(folder_results+f"/{name}_bid_ask_spread_pin.png")
     plt.close()
 
 
     # problem here
-    fig,ax = plt.subplots(figsize=(8,3))
+    fig,ax = plt.subplots(figsize=(10,5))
     l1, = ax.plot(graph_merge.index,graph_merge["buy-sell difference"])
-    ax.set_ylabel(r"buy-sell absolute difference")
+    ax.set_ylabel(r"buy-sell absolute difference",fontsize=15)
     ax2 = ax.twinx()
     l2, = ax2.plot(graph_merge.index, graph_merge.PIN,color="orange")
-    ax2.set_ylabel(r"PIN value")
+    ax2.set_ylabel(r"PIN value",fontsize=15)
 
-    plt.legend([l1, l2],["buy-sell difference", "PIN"])
+    plt.legend([l1, l2],["buy-sell difference", "PIN"],bbox_to_anchor=(0.6, -0.1))
     plt.xlabel(r"Date")
     plt.tight_layout()
     plt.grid(False)
-    plt.savefig(folder_results+"/buy_sell_diff_pin.png")
+    plt.savefig(folder_results+f"/{name}_buy_sell_diff_pin.png")
     plt.close()
 
-# %%
+    sns.histplot(graph_merge["PIN"],kde=True)
+    plt.tight_layout()
+    plt.savefig(folder_results+f"/{name}_dist_pin.png")
+    plt.close()
+
+    plt.boxplot(graph_merge["PIN"])
+    plt.xticks([1], [""])
+    plt.ylabel(r"PIN value",fontsize=12)
+    plt.tight_layout()
+    plt.savefig(folder_results+f"/{name}_boxplot_pin.png")
+    plt.close()
+
+    graph_merge["PIN"].describe().to_latex(folder_results+f"/{name}_pin_stat_desc.tex")
+
+### analyse of the total results ###
+
+df = pd.read_csv("./results/PIN_real.txt")
+df.describe().to_latex("./results/table/stat_descrip_PIN_real.tex")
+
 
 
 
