@@ -7,6 +7,8 @@ import numpy as np
 import time
 from tqdm import tqdm
 import matplotlib.pyplot as plt
+from matplotlib import style
+style.use('fivethirtyeight')
 
 deepsurrogate = DeepSurrogate()
 
@@ -66,7 +68,8 @@ df_ei = pd.DataFrame(list_of_ei)
 print("=== Saving results ===")
 df_ei.to_csv(path+"/ei_results.csv",index=False)
 
-df_ei.boxplot()
+fig = plt.figure(figsize=(8,5))
+plt.boxplot(df_ei)
 plt.xticks([1, 2, 3,4,5], [r'$a$', r'$\delta$', r'$\mu$', r'$\epsilon_b$', r'$\epsilon_s$'])
 #plt.title(r"Boxplot of $e_i$ by parameters")
 plt.ylabel(r"$e_i$")
@@ -78,7 +81,8 @@ plt.close()
 df_ei_q = df_ei[df_ei <= df_ei.quantile(0.75)]
 df_ei_q = df_ei_q.dropna()
 
-df_ei_q.boxplot()
+fig = plt.figure(figsize=(8,5))
+plt.boxplot(df_ei_q)
 plt.xticks([1, 2, 3,4,5], [r'$a$', r'$\delta$', r'$\mu$', r'$\epsilon_b$', r'$\epsilon_s$'])
 plt.ylabel(r"$e_i$")
 plt.xlabel(r"$x_i^*$")
