@@ -9,15 +9,13 @@ import tensorflow as tf
 tf.get_logger().setLevel('ERROR')
 tf.config.optimizer.set_jit(True)
 tf.compat.v1.OptimizerOptions(cpu_global_jit=True)
-policy = tf.keras.mixed_precision.experimental.Policy('mixed_float16')
-tf.keras.mixed_precision.experimental.set_policy(policy)
+tf.keras.mixed_precision.set_global_policy('mixed_float16')
 print(f"Number of GPUs available: {tf.test.is_gpu_available()}")
 
 from tensorflow import keras
 from tensorflow.keras import layers
 import tensorboard
 import datetime
-from scipy.stats import norm
 try:
     from parameters import *
 except ModuleNotFoundError:

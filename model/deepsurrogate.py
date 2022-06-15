@@ -1,6 +1,3 @@
-import os
-from numpy import float64
-import scipy.optimize as op
 import pandas as pd
 import time
 from tqdm import tqdm
@@ -71,7 +68,9 @@ class DeepSurrogate:
 
     def get_model_score(self):
         print("=== score of the model ===")
-        score = self.c_model.score(self.X.head(1000),self.Y.head(1000))
+        score = self.c_model.score(self.X.head(100000),self.Y.head(100000))
+        print("=== compute score ====")
+        print(score)
         score.to_latex("./results/table/result_model.tex",index=False)
 
     @tf.autograph.experimental.do_not_convert
@@ -117,7 +116,7 @@ class DeepSurrogate:
     
 if __name__ == '__main__':
     deepsurrogate = DeepSurrogate()
-    deepsurrogate.pin_estimation()
+    deepsurrogate.get_model_score()
 
 
         

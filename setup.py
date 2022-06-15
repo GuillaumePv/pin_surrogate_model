@@ -1,22 +1,28 @@
 import setuptools
 from distutils.core import setup
 
+def readme():
+    with open('README.md') as f:
+        return f.read()
+
 setup(
-  name = 'DeepSurrogate_pin',
+  name = 'DeepSurrogatepin',
   packages = ['model'],
-  version = '0.3',
+  version = '0.9',
   license='MIT',
   setup_requires=['wheel'],
   description = 'Deep surrogate model for the probability of informed trading model',
   author = 'Guillaume Pavé',
   author_email = 'guillaumepave@gmail.com',
-  url = 'https://github.com/GuillaumePv/',
+  url = 'https://github.com/GuillaumePv/pin_surrogate_model',
   # download_url = 'https://github.com/AntoineDidisheim/didipack/archive/v0.1.1.tar.gz',    # I explain this later on
-  keywords = ['Machine learning'],
+  keywords = ['Machine learning, market microstructure'],
   install_requires=[            # I get to this in a second
           'numpy',
           'pandas',
-          'tensorflow'
+          'tensorflow',
+          'tqdm',
+          'tensorflow_probability'
       ],
   classifiers=[
     'Development Status :: 3 - Alpha',
@@ -29,4 +35,6 @@ setup(
     'Programming Language :: Python :: 3.7',
     'Programming Language :: Python :: 3.8',
   ],
+  include_package_data=True,
+    package_data={'': ['./model_save/Layer_400_400_200_100_swish_Lr0_0005_ADAMoMSE_BATCH_256tr_size_3CM/*.p']},
 )
