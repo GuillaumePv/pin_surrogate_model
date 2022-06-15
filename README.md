@@ -1,4 +1,4 @@
-# Master thesis: Deep Structural estimation: with an application to market microstructure modelling
+# Master thesis: Deep Structural estimation: with an Application to Market Microstructure Modelling
 
 This package proposes an easy application of the master thesis: "Deep Structural estimation: with an application to market microstructure modelling"
 
