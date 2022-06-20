@@ -44,6 +44,6 @@ The surroate can not estimate PIN probability with parameters outside of this ra
 
 ## Contact
 
-Github project is available at: https://github.com/GuillaumePv/pin_surrogate_model.
+The Github repository is available at: https://github.com/GuillaumePv/pin_surrogate_model.
 
-If you find bugs, do not hesitate to create Issues inside of the github project.
+If you find bugs, do not hesitate to create Issues in the repository.

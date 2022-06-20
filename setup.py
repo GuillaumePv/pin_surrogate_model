@@ -9,7 +9,7 @@ long_description = (this_directory / "README.rst").read_text()
 setup(
   name = 'DeepSurrogatepin',
   packages = ['model'],
-  version = '1.0',
+  version = '1.01',
   license='MIT',
   setup_requires=['wheel'],
   description = 'Deep surrogate model for the probability of informed trading model',
