@@ -1,17 +1,20 @@
 import setuptools
 from distutils.core import setup
 
-def readme():
-    with open('README.md') as f:
-        return f.read()
+# read the contents of your README file
+from pathlib import Path
+this_directory = Path(__file__).parent
+long_description = (this_directory / "README.rst").read_text()
 
 setup(
   name = 'DeepSurrogatepin',
   packages = ['model'],
-  version = '0.9',
+  version = '1.0',
   license='MIT',
   setup_requires=['wheel'],
   description = 'Deep surrogate model for the probability of informed trading model',
+  long_description=long_description,
+  long_description_content_type='text/markdown',
   author = 'Guillaume Pavé',
   author_email = 'guillaumepave@gmail.com',
   url = 'https://github.com/GuillaumePv/pin_surrogate_model',
