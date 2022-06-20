@@ -152,7 +152,7 @@ class NetworkModel:
 
         print("=== Loading data ===")
         if self.par.opt.process.name == Process.PIN.name:
-            data_dir = self.par.data.path_sim_save + 'PIN_MLE_new.txt'
+            data_dir = self.par.data.path_sim_save + 'simulation_data_PIN.txt'
         else:
             data_dir = self.par.data.path_sim_save + 'APIN_MLE.txt'
         

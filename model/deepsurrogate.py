@@ -29,7 +29,7 @@ class DeepSurrogate:
 
         # à trouver le moyen de mettre dans une classe pour éviter les erreurs
         if self.par_c.opt.process.name == Process.PIN.name:
-            data_dir = self.par_c.data.path_sim_save + 'PIN_MLE_new.txt'
+            data_dir = self.par_c.data.path_sim_save + 'simulation_data_PIN.txt'
         else:
             data_dir = self.par_c.data.path_sim_save + 'APIN_MLE.txt'
 
@@ -83,13 +83,10 @@ class DeepSurrogate:
         df = pd.DataFrame([x],columns=COL_PLUS)
        
         def func_g(x_params):
-            # génial pour faire sur plusieurs colonnes la même valeur
             df[COL] = x_params.numpy()
-            # print("=== df ===")
-            # print(df)
+            
             grad, mle = self.c_model.get_grad_and_mle(df[COL_PLUS],True)
-            # add possibilities to use it on several period
-            # bug here
+            
             loss_value = np.abs(np.sum(mle))
             g = grad.mean()[COL].values
 
@@ -97,20 +94,13 @@ class DeepSurrogate:
             
             loss_value = tf.convert_to_tensor(loss_value)
 
-            #print('---',loss_value,flush=True)
             return loss_value
-
-       
 
         s = time.time()
         soln = tfp.optimizer.nelder_mead_minimize(objective_function=func_g, initial_vertex=init_x, max_iterations=50)
         soln_time = np.round((time.time() - s) / 60, 2)
         pred_par = soln.position.numpy()
-        obj_value = soln.objective_value.numpy()
        
-        # print(obj_value)
-        # print(pred_par)
-        # create a table with PIN, buys and sells
         PIN = np.round((pred_par[0]*pred_par[4])/((pred_par[0]*pred_par[4])+pred_par[2]+pred_par[3]),4)
         return PIN
     
