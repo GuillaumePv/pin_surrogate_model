@@ -70,7 +70,7 @@ pip3 install -r requirements.txt
 * Use *get_derivative* to get the first derivative of the log-likelihood function's for each input: 
     * *surrogate.get_derivative(X)*
 * Use *get_pin* to get the PIN value with the number of buy and sell trades computed thanks to the Lee and ready algorithm
-    * *surogate.get_pin(X) -> X should be a pandas Dataframe containing 'Buy' and "sell colmuns. Or a numpy array with the colmuns in the following order: 'buy', 'sell']
+    * *surogate.get_pin(X) -> X should be a pandas Dataframe containing 'Buy' and "sell colmuns. Or a numpy array with the colmuns in the following order: ['buy', 'sell']
 * The Input X should be a pandas DataFrame containing the name of the models parameters. Or a numpy with the columns in the order below:
     * PIN | ['alpha', 'delta', 'epsilon_b', 'epsilon_s', 'mu', 'buy', 'sell']
 
