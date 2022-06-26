@@ -95,7 +95,7 @@ The surroate can not estimate PIN probability with parameters outside of this ra
 
 
 
-## Python library (under development)
+## Python library
 
 ```bash
 pip install DeepSurrogatepin
