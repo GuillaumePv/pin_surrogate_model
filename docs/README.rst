@@ -2,6 +2,9 @@
 
 This package proposes an easy application of the master thesis: "Deep Structural estimation: with an application to market microstructure modelling"
 
+![alt text](https://github.com/GuillaumePv/pin_surrogate_model/blob/main/results/graphs/3d_comparison_model_surrogate.png?raw=true)
+The figure above shows the log-likelihood value of the PIN model (left) and the Deep-Surrogate (right)
+
 ## Authors
 
 - Guillaume Pavé (HEC Lausanne,guillaumepave@gmail.com)
@@ -42,8 +45,24 @@ The surroate can not estimate PIN probability with parameters outside of this ra
 | # of buy trades  | 55  | 700
 | # of sell trades  | 55  | 700
 
+## Code example
+
+
+```
+from model.deepsurrogate import DeepSurrogate
+from model.ml_model import NetworkModel
+from model.parameters import Params
+import sys
+
+par = Params()
+deepsurrogate = DeepSurrogate()
+
+```
+Now, we can use [demo.py](https://github.com/GuillaumePv/pin_surrogate_model/blob/main/demo.py) and [estimate_par_lbfgs.py.](https://github.com/GuillaumePv/pin_surrogate_model/blob/main/estimate_par_lbfgs.py)
 ## Contact
 
 The Github repository is available at: https://github.com/GuillaumePv/pin_surrogate_model.
 
-If you find bugs, do not hesitate to create Issues in the repository.
+If you find a bug or would like to request a feature, please [report it with
+the issue tracker.](https://github.com/GuillaumePv/pin_surrogate_model/issues) If you'd
+like to contribute to StereoVision, feel free to [fork it on GitHub.](https://github.com/GuillaumePv/pin_surrogate_model)

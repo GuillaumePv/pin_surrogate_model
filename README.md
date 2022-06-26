@@ -96,6 +96,12 @@ The surroate can not estimate PIN probability with parameters outside of this ra
 
 
 ## Python library (under development)
-pip install DeepSurrogatepin
 
-link of the pypl library: https://pypi.org/project/DeepSurrogatepin/
+```bash
+pip install DeepSurrogatepin
+```
+Link of the PyPl library: https://pypi.org/project/DeepSurrogatepin/
+
+If you find a bug or would like to request a feature, please [report it with
+the issue tracker.](https://github.com/GuillaumePv/pin_surrogate_model/issues) If you'd
+like to contribute to StereoVision, feel free to [fork it on GitHub.](https://github.com/GuillaumePv/pin_surrogate_model)

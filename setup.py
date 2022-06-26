@@ -4,12 +4,12 @@ from distutils.core import setup
 # read the contents of your README file
 from pathlib import Path
 this_directory = Path(__file__).parent
-long_description = (this_directory / "README.rst").read_text()
+long_description = (this_directory / "docs/README.rst").read_text()
 
 setup(
   name = 'DeepSurrogatepin',
   packages = ['model'],
-  version = '1.01',
+  version = '1.7',
   license='MIT',
   setup_requires=['wheel'],
   description = 'Deep surrogate model for the probability of informed trading model',

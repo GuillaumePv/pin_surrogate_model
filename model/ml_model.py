@@ -100,7 +100,6 @@ class NetworkModel:
             
         return X, y
 
-    # it works
     def split_state_data_par(self, df):
 
         opt_data = df[['buy', 'sell']]
@@ -114,10 +113,7 @@ class NetworkModel:
 
         return [par_est, opt_data]
 
-    def train(self): # In Construction
-    #################
-    # first get the data_plit col size
-    #################
+    def train(self): 
 
         c = []
         y = ['MLE'] # LE estimation
@@ -280,7 +276,6 @@ class NetworkModel:
         L = []
         for i, l in enumerate(self.par.model.layers):
             if i == 0:
-                # L.append(tf.keras.layers.Dense(l, activation="swish", input_dim=2, input_shape=[len(self.par.process.__dict__)])) # trouver le moyen de changer ça
                 L.append(FirstLayer(l,self.par))
             else:
                 L.append(layers.Dense(l, activation= self.par.model.activation, dtype=tf.float64))
@@ -289,7 +284,6 @@ class NetworkModel:
             L.append(layers.Dense(1,dtype=tf.float64))
             self.model = keras.Sequential(L)
 
-            # optimizer = tf.keras.optimizers.RMSprop(0.05)
         if self.par.model.opti == Optimizer.SGD:
             optimizer = tf.keras.optimizers.SGD(self.par.model.learning_rate)
         if self.par.model.opti == Optimizer.RMS_PROP:
@@ -302,8 +296,6 @@ class NetworkModel:
             optimizer = tf.keras.optimizers.Adamax(self.par.model.learning_rate)
         if self.par.model.opti == Optimizer.ADAGRAD:
             optimizer = tf.keras.optimizers.Adamax(self.par.model.learning_rate)
-
-        # optimizer = tf.keras.optimizers.Adam(0.00005/2)
 
         def r_square(y_true, y_pred):
             SS_res = tf.reduce_sum(tf.square(y_true - y_pred))
